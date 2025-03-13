@@ -1,0 +1,23 @@
+# Basic configuration
+Allow From All
+Satisfy Any
+Options FollowSymLinks
+RewriteEngine On
+
+# Remove trailing slashes
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [L,R=301]
+
+# Brand routes
+# Get all brands
+RewriteRule ^brands/?$ APIBrands.php?action=getAll [L,QSA]
+
+# Get specific brand by ID
+RewriteRule ^brands/([0-9]+)/?$ APIBrands.php?action=get&id=$1 [L,QSA]
+
+# Search brands by name
+RewriteRule ^brands/search/([^/]+)/?$ APIBrands.php?action=search&q=$1 [L,QSA]
+
+# Handle HTTP methods for brands
+RewriteCond %{REQUEST_METHOD} ^(POST|PUT|DELETE)$
+RewriteRule ^brands/?$ APIBrands.php [L,QSA]
