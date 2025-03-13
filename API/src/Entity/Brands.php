@@ -83,5 +83,12 @@ class Brands
         return $this;
     }
 
+    public function jsonSerialize(){
+        $res = [
+            'brand_id' => $this->getBrandId(),
+            'brand_name' => $this->getBrandName()
+        ];
+        return $res;
+    }
 
 }
