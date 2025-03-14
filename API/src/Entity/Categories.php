@@ -91,4 +91,12 @@ class Categories
         return $this->products;
     }
 
+    public function jsonSerialize(){
+        $res = [
+            "category_id" => $this->getCategoryId(),
+            "category_name" => $this->getCategoryName()
+        ];
+        return $res;
+    }
+
 }

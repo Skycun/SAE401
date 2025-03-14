@@ -19,7 +19,7 @@
     }
 
 
-    require __DIR__ . '/bootstrap.php';
+    require __DIR__ . '/../bootstrap.php';
     use Entity\Brands;
     $request_method = $_SERVER["REQUEST_METHOD"];
 
@@ -104,6 +104,28 @@
             $entityManager->flush();
             $res = Array("state" => "success");
             echo json_encode($res);
+            break;
+        case "PUT":
+            $data = json_decode(file_get_contents("php://input"), true);
+            if(!isset($data["brand_name"]) || !isset($data["id"])){
+                throw new Error("Brand name or ID not found");
+                break;
+            }
+
+            $brandRepo = $entityManager->getRepository(Brands::class);
+            $brand = $brandRepo->find($data["id"]);
+            if($brand == null){
+                throw new Error("Brand not found");
+            }
+            $brand->setBrandName($data["brand_name"]);
+            $entityManager->persist($brand);
+            $entityManager->flush();
+            $res = Array("state" => "success", "brand" => $brand->jsonSerialize());
+            echo json_encode($res);
+            break;
+        default:
+            throw new Error("Method not found");
+            break;
     }
 
     } catch (Error $error) {

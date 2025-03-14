@@ -10,14 +10,28 @@ RewriteRule ^(.*)/$ /$1 [L,R=301]
 
 # Brand routes
 # Get all brands
-RewriteRule ^brands/?$ APIBrands.php [L,QSA]
+RewriteRule ^brands/?$ api_requests/Brands.php [L,QSA]
 
 # Get specific brand by ID
-RewriteRule ^brands/([0-9]+)/?$ APIBrands.php?action=get&id=$1 [L,QSA]
+RewriteRule ^brands/([0-9]+)/?$ api_requests/Brands.php?action=get&id=$1 [L,QSA]
 
 # Search brands by name
-RewriteRule ^brands/search/([^/]+)/?$ APIBrands.php?action=search&q=$1 [L,QSA]
+RewriteRule ^brands/search/([^/]+)/?$ api_requests/Brands.php?action=search&q=$1 [L,QSA]
 
 # Handle HTTP methods for brands
 RewriteCond %{REQUEST_METHOD} ^(POST|PUT|DELETE)$
-RewriteRule ^brands/?$ APIBrands.php [L,QSA]
+RewriteRule ^brands/?$ api_requests/Brands.php [L,QSA]
+
+# Categories routes
+# Get all categories
+RewriteRule ^categories/?$ api_requests/Categories.php [L,QSA]
+
+# Get specific category by ID
+RewriteRule ^categories/([0-9]+)/?$ api_requests/Categories.php?action=get&id=$1 [L,QSA]
+
+# Search categories by name
+RewriteRule ^categories/search/([^/]+)/?$ api_requests/Categories.php?action=search&q=$1 [L,QSA]
+
+# Handle HTTP methods for categories
+RewriteCond %{REQUEST_METHOD} ^(POST|PUT|DELETE)$
+RewriteRule ^categories/?$ api_requests/Categories.php [L,QSA]
