@@ -7,18 +7,6 @@
     // Définir votre clé API
     define('API_KEY', 'e8f1997c763');
 
-    // Vérifier la clé API
-    function validateApiKey() {
-        $headers = getallheaders();        
-        // Vérifier si la clé est présente dans les headers
-        if (!isset($headers['Api']) || $headers['Api'] !== API_KEY) {
-            header('HTTP/1.1 401 Unauthorized');
-            echo json_encode(['error' => 'Invalid API Key']);
-            exit();
-        }
-    }
-
-
     require __DIR__ . '/../bootstrap.php';
     use Entity\Products;
     use Entity\Brands;
@@ -26,6 +14,20 @@
 
     $request_method = $_SERVER["REQUEST_METHOD"];
 
+    // Vérifier la clé API
+    function validateApiKey() {
+        $headers = getallheaders();        
+        if($_SERVER["REQUEST_METHOD"] == "GET"){ //Si la méthode est GET, on ne vérifie pas la clé API
+            return;
+        }
+
+        // Vérifier si la clé est présente dans les headers
+        if (!isset($headers['Api']) || $headers['Api'] !== API_KEY) {
+            header('HTTP/1.1 401 Unauthorized');
+            echo json_encode(['error' => 'Invalid API Key']);
+            exit();
+        }
+    }
     validateApiKey();
 
     try{
