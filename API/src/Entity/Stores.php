@@ -305,4 +305,18 @@ class Stores
         return $this;
     }
 
+    public function jsonSerialize(){
+        $res = [
+            'store_id' => $this->getStoreId(),
+            'store_name' => $this->getStoreName(),
+            'phone' => $this->getPhone(),
+            'email' => $this->getEmail(),
+            'street' => $this->getStreet(),
+            'city' => $this->getCity(),
+            'state' => $this->getState(),
+            'zip_code' => $this->getZipCode()
+        ];
+        return $res;
+    }
+
 }

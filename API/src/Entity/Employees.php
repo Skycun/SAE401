@@ -177,4 +177,16 @@ class Employees
         $this->store = $store;
         return $this;
     }
+
+    public function jsonSerialize(){
+        $res = [
+            'employees_id' => $this->getEmployeesId(),
+            'store' => $this->getStore()->jsonSerialize(),
+            'employees_name' => $this->getEmployeesName(),
+            'employees_email' => $this->getEmployeesEmail(),
+            'employees_password' => $this->getEmployeesPassword(),
+            'employees_role' => $this->getEmployeesRole()
+        ];
+        return $res;
+    }
 }
