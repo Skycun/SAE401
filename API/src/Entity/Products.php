@@ -214,4 +214,17 @@ class Products
         }
         return $this;
     }
+
+    public function jsonSerialize()
+    {
+        $res = [
+            'product_id' => $this->getProductId(),
+            'product_name' => $this->getProductName(),
+            'brand' => $this->getBrand()->jsonSerialize(),
+            'category' => $this->getCategory()->jsonSerialize(),
+            'model_year' => $this->getModelYear(),
+            'list_price' => $this->getListPrice(),
+        ];
+        return $res;
+    }
 }

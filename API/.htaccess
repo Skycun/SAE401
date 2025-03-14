@@ -35,3 +35,23 @@ RewriteRule ^categories/search/([^/]+)/?$ api_requests/Categories.php?action=sea
 # Handle HTTP methods for categories
 RewriteCond %{REQUEST_METHOD} ^(POST|PUT|DELETE)$
 RewriteRule ^categories/?$ api_requests/Categories.php [L,QSA]
+
+# Products routes
+# Get all products
+RewriteRule ^products/?$ api_requests/Products.php [L,QSA]
+
+# Get specific product by ID
+RewriteRule ^products/([0-9]+)/?$ api_requests/Products.php?action=get&id=$1 [L,QSA]
+
+# Search products by name
+RewriteRule ^products/search/([^/]+)/?$ api_requests/Products.php?action=search&q=$1 [L,QSA]
+
+# Get products by category
+RewriteRule ^products/category/([0-9]+)/?$ api_requests/Products.php?action=category&category_id=$1 [L,QSA]
+
+# Get products by brand
+RewriteRule ^products/brand/([0-9]+)/?$ api_requests/Products.php?action=brand&brand_id=$1 [L,QSA]
+
+# Handle HTTP methods for products
+RewriteCond %{REQUEST_METHOD} ^(POST|PUT|DELETE)$
+RewriteRule ^products/?$ api_requests/Products.php [L,QSA]

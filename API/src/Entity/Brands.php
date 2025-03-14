@@ -83,6 +83,11 @@ class Brands
         return $this;
     }
 
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
     public function jsonSerialize(){
         $res = [
             'brand_id' => $this->getBrandId(),
