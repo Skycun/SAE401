@@ -79,4 +79,15 @@ class Stocks
         $this->quantity = $quantity;
         return $this;
     }
+
+    public function jsonSerialize()
+    {
+        $res = Array(
+            "stock_id" => $this->stock_id,
+            "store" => $this->store->jsonSerialize(),
+            "product" => $this->product->jsonSerialize(),
+            "quantity" => $this->quantity
+        );
+        return $res;
+    }
 }
