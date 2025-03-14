@@ -43,16 +43,16 @@
                 break;
             }
             switch ($_REQUEST["action"]) {
-                //If the action is get, return the products with the id
+                //If the action is get, return the employee with the id
                 case 'get':
                     if(!isset($_REQUEST["id"])){
                         throw new Error("ID not found");
                     }
-                    $product = $productRepo->find($_REQUEST["id"]);
-                    if($product == null){
+                    $employee = $EmpRepo->find($_REQUEST["id"]);
+                    if($employee == null){
                          throw new Error("Product not found");
                     }
-                    echo json_encode($product->jsonSerialize());
+                    echo json_encode($employee->jsonSerialize());
                     break;
                 
                 //If the action is search, return the product with the name
@@ -60,48 +60,17 @@
                     if(!isset($_REQUEST["q"])){
                         throw new Error("Querry not found");
                     }
-                    $products = $productRepo->findBy(["product_name" => $_REQUEST["q"]]);
-                    $productsArray = [];
-                    foreach($products as $product){
-                        $productsArray[] = $product->jsonSerialize();
+                    
+                    $employees = $EmpRepo->findBy(["employees_name" => $_REQUEST["q"]]);
+                    $employeesArray = [];
+                    foreach($employees as $employee){
+                        $employeesArray[] = $employee->jsonSerialize();
                     }
-                    if(count($productsArray) == 0){
-                        throw new Error("Category not found");
+                    if(count($employeesArray) == 0){
+                        throw new Error("Employees not found");
                     }
-                    echo json_encode($productsArray);
+                    echo json_encode($employeesArray);
                     break;
-                //f the action is brand, return the product of the brand
-                case 'brand':
-                    if(!isset($_REQUEST["brand_id"])){
-                        throw new Error("Brand ID not found");
-                    }
-                    $brand = $entityManager->getRepository(Brands::class)->find($_REQUEST["brand_id"]);
-                    if($brand == null){
-                        throw new Error("Brand not found");
-                    }
-                    $brand->getProducts();
-                    $productsArray = [];
-                    foreach($brand->getProducts() as $product){
-                        $productsArray[] = $product->jsonSerialize();
-                    }
-                    echo json_encode($productsArray);
-                    break;
-                case 'category':
-                    if(!isset($_REQUEST["category_id"])){
-                        throw new Error("Category ID not found");
-                    }
-                    $category = $entityManager->getRepository(Categories::class)->find($_REQUEST["category_id"]);
-                    if($category == null){
-                        throw new Error("Category not found");
-                    }
-                    $category->getProducts();
-                    $productsArray = [];
-                    foreach($category->getProducts() as $product){
-                        $productsArray[] = $product->jsonSerialize();
-                    }
-                    echo json_encode($productsArray);
-                    break;
-                
                 default:
                     throw new Error("Action not found");
                     break;
