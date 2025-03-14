@@ -55,3 +55,23 @@ RewriteRule ^products/brand/([0-9]+)/?$ api_requests/Products.php?action=brand&b
 # Handle HTTP methods for products
 RewriteCond %{REQUEST_METHOD} ^(POST|PUT|DELETE)$
 RewriteRule ^products/?$ api_requests/Products.php [L,QSA]
+
+# Employees routes
+# Get all employees
+RewriteRule ^employees/?$ api_requests/Employees.php [L,QSA]
+
+# Get specific employee by ID
+RewriteRule ^employees/([0-9]+)/?$ api_requests/Employees.php?action=get&id=$1 [L,QSA]
+
+# Search employees by name
+RewriteRule ^employees/search/([^/]+)/?$ api_requests/Employees.php?action=search&q=$1 [L,QSA]
+
+# Get employees by store
+RewriteRule ^employees/store/([0-9]+)/?$ api_requests/Employees.php?action=store&store_id=$1 [L,QSA]
+
+# Employee authentication
+RewriteRule ^employees/login/?$ api_requests/Employees.php?action=login [L,QSA]
+
+# Handle HTTP methods for employees
+RewriteCond %{REQUEST_METHOD} ^(POST|PUT|DELETE)$
+RewriteRule ^employees/?$ api_requests/Employees.php [L,QSA]

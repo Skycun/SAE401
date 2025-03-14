@@ -55,7 +55,7 @@
                     echo json_encode($employee->jsonSerialize());
                     break;
                 
-                //If the action is search, return the product with the name
+                //If the action is search, return the employee with the name
                 case 'search':
                     if(!isset($_REQUEST["q"])){
                         throw new Error("Querry not found");
@@ -71,6 +71,26 @@
                     }
                     echo json_encode($employeesArray);
                     break;
+                //If the action is store, return the employees of a store
+                case 'store':
+                    if(!isset($_REQUEST["store_id"])){
+                        throw new Error("Store ID not found");
+                    }
+                    $store = $entityManager->getRepository(Stores::class)->find($_REQUEST["store_id"]);
+                    if($store == null){
+                        throw new Error("Store not found");
+                    }
+                    $employees = $EmpRepo->findBy(["store" => $store]);
+                    $employeesArray = [];
+                    foreach($employees as $employee){
+                        $employeesArray[] = $employee->jsonSerialize();
+                    }
+                    if(count($employeesArray) == 0){
+                        throw new Error("Employees not found");
+                    }
+                    echo json_encode($employeesArray);
+                    break;
+
                 default:
                     throw new Error("Action not found");
                     break;
@@ -78,110 +98,95 @@
                 break;
         case "POST":
             $data = json_decode(file_get_contents("php://input"), true);
-            if(!isset($data["product_name"]) || !isset($data["brand_id"]) || !isset($data["category_id"]) || !isset($data["model_year"]) || !isset($data["list_price"])){
-                throw new Error("Some data is missing, check your : product_name, brand_id, category_id, model_year, list_price");
+            if(!isset($data["employees_name"]) || !isset($data["employees_email"]) || !isset($data["employees_password"]) || !isset($data["employees_role"]) || !isset($data["store_id"])){
+                throw new Error("Some data is missing, check your : employees_name, employees_email, employees_password, employees_role, store_id");
                 break;
             }
 
-            //Créer le produit
-            $product = new Products();
-            //Met le nom du produit
-            $product->setProductName($data["product_name"]);
-
-            //Met le brand
-            $brand = $entityManager->getRepository(Brands::class)->find($data["brand_id"]);
-            if($brand == null){
-                throw new Error("Brand not found, change the brand_id");
+            //Créer l'employée
+            $employee = new Employees();
+            //Met le nom de l'employee
+            $employee->setEmployeesName($data["employees_name"]);
+            //Met l'email de l'employee
+            $employee->setEmployeesEmail($data["employees_email"]);
+            //Met le mot de passe de l'employee
+            $employee->setEmployeesPassword($data["employees_password"]);
+            //Met le role de l'employee
+            $employee->setEmployeesRole($data["employees_role"]);
+            //Met le store de l'employee
+            $store = $entityManager->getRepository(Stores::class)->find($data["store_id"]);
+            if($store == null){
+                throw new Error("Store not found, change the store_id");
             }
-            $product->setBrand($brand);
-
-            //Met la category
-            $category = $entityManager->getRepository(Categories::class)->find($data["category_id"]);
-            if($category == null){
-                throw new Error("Category not found, change the category_id");
-            }
-            $product->setCategory($category);
-
-            //Met l'année de création
-            $product->setModelYear($data["model_year"]);
-
-            //Met le prix
-            $product->setListPrice($data["list_price"]);
-            $entityManager->persist($product);
+            $employee->setStore($store);
+            $entityManager->persist($employee);
             $entityManager->flush();
-            $res = Array("state" => "success", "product" => $product->jsonSerialize());
+            $res = Array("state" => "success", "employee" => $employee->jsonSerialize());
             echo json_encode($res);
             break;
+
         case "DELETE":
-            $productRepo = $entityManager->getRepository(Products::class);
+            $EmpRepo = $entityManager->getRepository(Employees::class);
             if(!isset($_REQUEST["id"])){
                 throw new Error("ID not found");
             }
-            $product = $productRepo->find($_REQUEST["id"]);
-            if($product == null){
-                throw new Error("Category not found");
+            $employee = $EmpRepo->find($_REQUEST["id"]);
+            if($employee == null){
+                throw new Error("Employee not found");
             }
-            $entityManager->remove($product);
+            $entityManager->remove($employee);
             $entityManager->flush();
             $res = Array("state" => "success");
             echo json_encode($res);
             break;
+
         case "PUT":
             $data = json_decode(file_get_contents("php://input"), true);
-            if(!isset($_REQUEST["id"])){
+            if(!isset($data["id"])){
                 throw new Error("The ID is not found");
                 break;
             }
 
-            $productRepo = $entityManager->getRepository(Products::class);
-            $product = $productRepo->find($data["id"]);
-            if($product == null){
-                throw new Error("Product not found");
+            $EmpRepo = $entityManager->getRepository(Employees::class);
+            $employee = $EmpRepo->find($data["id"]);
+            if($employee == null){
+                throw new Error("Employee not found");
             }
 
             $nbOfChange = 0;
-            if(isset($data["product_name"])){
-                $product->setProductName($data["product_name"]);
+            if(isset($data["employees_name"])){
+                $employee->setEmployeesName($data["employees_name"]);
                 $nbOfChange++;
             }
-
-            if(isset($data["brand_id"])){
-                $brand = $entityManager->getRepository(Brands::class)->find($data["brand_id"]);
-                if($brand == null){
-                    throw new Error("Brand not found, change the brand_id");
+            if(isset($data["employees_email"])){
+                $employee->setEmployeesEmail($data["employees_email"]);
+                $nbOfChange++;
+            }
+            if(isset($data["employees_password"])){
+                $employee->setEmployeesPassword($data["employees_password"]);
+                $nbOfChange++;
+            }
+            if(isset($data["employees_role"])){
+                $employee->setEmployeesRole($data["employees_role"]);
+                $nbOfChange++;
+            }
+            if(isset($data["store_id"])){
+                $store = $entityManager->getRepository(Stores::class)->find($data["store_id"]);
+                if($store == null){
+                    throw new Error("Store not found, change the store_id");
                 }
-                $product->setBrand($brand);
-                $nbOfChange++;
-            }
-
-            if(isset($data["category_id"])){
-                $category = $entityManager->getRepository(Categories::class)->find($data["category_id"]);
-                if($category == null){
-                    throw new Error("Category not found, change the category_id");
-                }
-                $product->setCategory($category);
-                $nbOfChange++;
-            }
-
-            if(isset($data["model_year"])){
-                $product->setModelYear($data["model_year"]);
-                $nbOfChange++;
-            }
-
-            if(isset($data["list_price"])){
-                $product->setListPrice($data["list_price"]);
+                $employee->setStore($store);
                 $nbOfChange++;
             }
 
             $entityManager->flush();
-            $res = Array("state" => "success", "product" => $product->jsonSerialize(), "changes" => $nbOfChange . " changes");
+            $res = Array("state" => "success", "employee" => $employee->jsonSerialize(), "changes" => $nbOfChange . " changes");
             echo json_encode($res);
             break;
         default:
             throw new Error("Method not found");
             break;
-    }
-
+        }
     } catch (Error $error) {
         echo json_encode(["error" => $error->getMessage()]);
     }
