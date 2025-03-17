@@ -75,3 +75,17 @@ RewriteRule ^employees/login/?$ api_requests/Employees.php?action=login [L,QSA]
 # Handle HTTP methods for employees
 RewriteCond %{REQUEST_METHOD} ^(POST|PUT|DELETE)$
 RewriteRule ^employees/?$ api_requests/Employees.php [L,QSA]
+
+# Stocks routes
+# Get all stocks
+RewriteRule ^stocks/?$ api_requests/Stocks.php [L,QSA]
+
+# Get specific stock by ID
+RewriteRule ^stocks/([0-9]+)/?$ api_requests/Stocks.php?action=get&id=$1 [L,QSA]
+
+# Search stocks by quantity parameters
+RewriteRule ^stocks/page/([0-9]+)/?$ api_requests/Stocks.php?action=paginate&limit=25&page=$1 [L,QSA]
+
+# Handle HTTP methods for stocks
+RewriteCond %{REQUEST_METHOD} ^(POST|PUT|DELETE)$
+RewriteRule ^stocks/?$ api_requests/Stocks.php [L,QSA]
