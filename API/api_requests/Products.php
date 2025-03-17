@@ -64,16 +64,25 @@
                 //If the action is search, return the product with the name
                 case 'search':
                     if(!isset($_REQUEST["q"])){
-                        throw new Error("Querry not found");
+                        throw new Error("Query not found");
                     }
-                    $products = $productRepo->findBy(["product_name" => $_REQUEST["q"]]);
+                    
+                    // Recherche plus flexible avec LIKE %query%
+                    $products = $productRepo->createQueryBuilder('p')
+                        ->where('p.product_name LIKE :query')
+                        ->setParameter('query', '%' . $_REQUEST["q"] . '%')
+                        ->getQuery()
+                        ->getResult();
+                    
                     $productsArray = [];
                     foreach($products as $product){
                         $productsArray[] = $product->jsonSerialize();
                     }
+                    
                     if(count($productsArray) == 0){
-                        throw new Error("Category not found");
+                        throw new Error("No products found matching your search");
                     }
+                    
                     echo json_encode($productsArray);
                     break;
                 //f the action is brand, return the product of the brand

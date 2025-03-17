@@ -66,7 +66,7 @@
                     
                     $searchTerm = '%' . $_REQUEST["q"] . '%';
                     
-                    // Utiliser QueryBuilder avec LIKE pour une recherche partielle
+                    // QueryBuilder avec LIKE pour une recherche partielle
                     $qb = $entityManager->createQueryBuilder();
                     $qb->select('s')
                        ->from('Entity\Stores', 's')
@@ -110,7 +110,7 @@
             $store->setZipCode($data["zip_code"]);
             $entityManager->persist($store);
             $entityManager->flush();
-            $res = Array("state" => "success", "brand" => $store->jsonSerialize());
+            $res = Array("state" => "success", "store" => $store->jsonSerialize());
             echo json_encode($res);
             break;
 

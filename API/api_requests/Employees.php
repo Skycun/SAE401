@@ -90,6 +90,21 @@
                     }
                     echo json_encode($employeesArray);
                     break;
+                case "login":
+                    $data = json_decode(file_get_contents("php://input"), true);
+                    if(!isset($data["email"]) || !isset($data["password"])){
+                        throw new Error("Some data is missing, check your : email, password");
+                        break;
+                    }
+                    $employee = $EmpRepo->findOneBy(["employees_email" => $data["email"], "employees_password" => $data["password"]]);
+                    if($employee == null){
+                        throw new Error("Employee not found, check your email and password");
+                    }
+                    $employee->setEmployeesPassword("********");
+                    $res = Array("state" => "success", "message" => "You are connected", "employee" => $employee->jsonSerialize());
+
+                    echo json_encode($res);
+                    break;
 
                 default:
                     throw new Error("Action not found");
