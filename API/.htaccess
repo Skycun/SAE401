@@ -89,3 +89,17 @@ RewriteRule ^stocks/page/([0-9]+)/?$ api_requests/Stocks.php?action=paginate&lim
 # Handle HTTP methods for stocks
 RewriteCond %{REQUEST_METHOD} ^(POST|PUT|DELETE)$
 RewriteRule ^stocks/?$ api_requests/Stocks.php [L,QSA]
+
+# Stores routes
+# Get all stores
+RewriteRule ^stores/?$ api_requests/Stores.php [L,QSA]
+
+# Get specific store by ID
+RewriteRule ^stores/([0-9]+)/?$ api_requests/Stores.php?action=get&id=$1 [L,QSA]
+
+# Search stores by name
+RewriteRule ^stores/search/([^/]+)/?$ api_requests/Stores.php?action=search&q=$1 [L,QSA]
+
+# Handle HTTP methods for stores
+RewriteCond %{REQUEST_METHOD} ^(POST|PUT|DELETE)$
+RewriteRule ^stores/?$ api_requests/Stores.php [L,QSA]
