@@ -3,144 +3,85 @@
 ## API Documentation
 
 ### Introduction
-Cette API RESTful permet l'accès aux données de notre système de gestion de magasins, incluant les marques, catégories, produits, employés, stocks et magasins.
+This RESTful API allows access to our store management system data, including brands, categories, products, employees, stocks, and stores.
 
-### Points d'accès disponibles
+### Available Endpoints
 
 #### 📦 Brands
 
-| Méthode | URL | Description |
+| Method | URL | Description |
 |--------|-----|-------------|
-| GET | `/brands` | Récupérer toutes les marques |
-| GET | `/brands/{id}` | Récupérer une marque par ID |
-| GET | `/brands/search/{query}` | Rechercher des marques par nom |
-| POST | `/brands` | Créer une nouvelle marque |
-| PUT | `/brands` | Mettre à jour une marque |
-| DELETE | `/brands` | Supprimer une marque |
+| GET | `/brands` | Get all brands |
+| GET | `/brands/{id}` | Get a specific brand by ID |
+| GET | `/brands/search/{query}` | Search brands by name |
+| POST | `/brands` | Create a new brand |
+| PUT | `/brands` | Update a brand |
+| DELETE | `/brands` | Delete a brand |
 
 #### 📚 Categories
 
-| Méthode | URL | Description |
+| Method | URL | Description |
 |--------|-----|-------------|
-| GET | `/categories` | Récupérer toutes les catégories |
-| GET | `/categories/{id}` | Récupérer une catégorie par ID |
-| GET | `/categories/search/{query}` | Rechercher des catégories par nom |
-| POST | `/categories` | Créer une nouvelle catégorie |
-| PUT | `/categories` | Mettre à jour une catégorie |
-| DELETE | `/categories` | Supprimer une catégorie |
+| GET | `/categories` | Get all categories |
+| GET | `/categories/{id}` | Get a specific category by ID |
+| GET | `/categories/search/{query}` | Search categories by name |
+| POST | `/categories` | Create a new category |
+| PUT | `/categories` | Update a category |
+| DELETE | `/categories` | Delete a category |
 
 #### 🛍️ Products
 
-| Méthode | URL | Description |
+| Method | URL | Description |
 |--------|-----|-------------|
-| GET | `/products` | Récupérer tous les produits |
-| GET | `/products/{id}` | Récupérer un produit par ID |
-| GET | `/products/search/{query}` | Rechercher des produits par nom |
-| GET | `/products/category/{category_id}` | Récupérer les produits par catégorie |
-| GET | `/products/brand/{brand_id}` | Récupérer les produits par marque |
-| POST | `/products` | Créer un nouveau produit |
-| PUT | `/products` | Mettre à jour un produit |
-| DELETE | `/products` | Supprimer un produit |
+| GET | `/products` | Get all products |
+| GET | `/products/{id}` | Get a specific product by ID |
+| GET | `/products/search/{query}` | Search products by name |
+| GET | `/products/category/{category_id}` | Get products by category |
+| GET | `/products/brand/{brand_id}` | Get products by brand |
+| POST | `/products` | Create a new product |
+| PUT | `/products` | Update a product |
+| DELETE | `/products` | Delete a product |
 
 #### 👥 Employees
 
-| Méthode | URL | Description |
+| Method | URL | Description |
 |--------|-----|-------------|
-| GET | `/employees` | Récupérer tous les employés |
-| GET | `/employees/{id}` | Récupérer un employé par ID |
-| GET | `/employees/search/{query}` | Rechercher des employés par nom |
-| GET | `/employees/store/{store_id}` | Récupérer les employés par magasin |
-| POST | `/employees/login` | Authentifier un employé |
-| POST | `/employees` | Créer un nouvel employé |
-| PUT | `/employees` | Mettre à jour un employé |
-| DELETE | `/employees` | Supprimer un employé |
+| GET | `/employees` | Get all employees |
+| GET | `/employees/{id}` | Get a specific employee by ID |
+| GET | `/employees/search/{query}` | Search employees by name |
+| GET | `/employees/store/{store_id}` | Get employees by store |
+| POST | `/employees/login` | Authenticate an employee |
+| POST | `/employees` | Create a new employee |
+| PUT | `/employees` | Update an employee |
+| DELETE | `/employees` | Delete an employee |
 
 #### 🏬 Stores
 
-| Méthode | URL | Description |
+| Method | URL | Description |
 |--------|-----|-------------|
-| GET | `/stores` | Récupérer tous les magasins |
-| GET | `/stores/{id}` | Récupérer un magasin par ID |
-| GET | `/stores/search/{query}` | Rechercher des magasins par nom |
-| POST | `/stores` | Créer un nouveau magasin |
-| PUT | `/stores` | Mettre à jour un magasin |
-| DELETE | `/stores` | Supprimer un magasin |
+| GET | `/stores` | Get all stores |
+| GET | `/stores/{id}` | Get a specific store by ID |
+| GET | `/stores/search/{query}` | Search stores by name |
+| POST | `/stores` | Create a new store |
+| PUT | `/stores` | Update a store |
+| DELETE | `/stores` | Delete a store |
 
 #### 📊 Stocks
 
-| Méthode | URL | Description |
+| Method | URL | Description |
 |--------|-----|-------------|
-| GET | `/stocks` | Récupérer tous les stocks |
-| GET | `/stocks/{id}` | Récupérer un stock par ID |
-| GET | `/stocks/product/{product_id}` | Récupérer les stocks par produit |
-| GET | `/stocks/store/{store_id}` | Récupérer les stocks par magasin |
-| GET | `/stocks/quantity/min/{quantity}` | Récupérer les stocks avec une quantité minimale |
-| GET | `/stocks/quantity/max/{quantity}` | Récupérer les stocks avec une quantité maximale |
-| GET | `/stocks/quantity/range/{min}/{max}` | Récupérer les stocks dans une fourchette de quantité |
-| POST | `/stocks` | Créer un nouveau stock |
-| PUT | `/stocks` | Mettre à jour un stock |
-| DELETE | `/stocks` | Supprimer un stock |
+| GET | `/stocks` | Get all stocks |
+| GET | `/stocks/{id}` | Get a specific stock by ID |
+| GET | `/stocks/product/{product_id}` | Get stocks by product |
+| GET | `/stocks/store/{store_id}` | Get stocks by store |
+| GET | `/stocks/page/{page_number}` | Get paginated stocks |
+| POST | `/stocks` | Create a new stock |
+| PUT | `/stocks` | Update a stock |
+| DELETE | `/stocks` | Delete a stock |
 
-### Authentification
+### Authentication
 
-Toutes les requêtes à l'API nécessitent une clé d'API valide. Ajoutez l'en-tête `Api` à vos requêtes :
+All API requests require a valid API key. Add the Api header to your requests:
 
 ```
 Api: e8f1997c763
-```
-
-
-### Diagramme des relations entre entités
-
-```mermaid
-erDiagram
-    Brands ||--o{ Products : "possède"}
-    Categories ||--o{ Products : "contient"}
-    Products ||--o{ Stocks : "est disponible en"}
-    Stores ||--o{ Stocks : "possède"}
-    Stores ||--o{ Employees : "emploie"}
-    
-    Brands {
-        int brand_id PK
-        string brand_name
-    }
-    
-    Categories {
-        int category_id PK
-        string category_name
-    }
-    
-    Products {
-        int product_id PK
-        string product_name
-        int brand_id FK
-        int category_id FK
-        int model_year
-        float list_price
-    }
-    
-    Employees {
-        int employee_id PK
-        string employee_name
-        string employee_email
-        string employee_password
-        string employee_role
-        int store_id FK
-    }
-    
-    Stores {
-        int store_id PK
-        string store_name
-        string phone
-        string email
-        string street
-        string city
-        string state
-        string zip_code
-    }
-    
-    Stocks {
-        int store_id PK,FK
-        int product_id PK,FK
-        int quantity
-    }
