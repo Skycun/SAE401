@@ -137,6 +137,62 @@ This RESTful API allows access to our store management system data, including br
 }
 ```
 
+### Database Diagram
+```mermaid
+erDiagram
+    Brands ||--o{ Products : "has"
+    Categories ||--o{ Products : "contains"
+    Products ||--o{ Stocks : "is_stocked_as"
+    Stores ||--o{ Stocks : "maintains"
+    Stores ||--o{ Employees : "employs"
+    
+    Brands {
+        int brand_id PK
+        string brand_name
+    }
+    
+    Categories {
+        int category_id PK
+        string category_name
+    }
+    
+    Products {
+        int product_id PK
+        string product_name
+        int brand_id FK
+        int category_id FK
+        int model_year
+        float list_price
+    }
+    
+    Employees {
+        int employees_id PK
+        string employees_name
+        string employees_email
+        string employees_password
+        string employees_role
+        int store_id FK
+    }
+    
+    Stores {
+        int store_id PK
+        string store_name
+        string phone
+        string email
+        string street
+        string city
+        string state
+        string zip_code
+    }
+    
+    Stocks {
+        int stock_id PK
+        int store_id FK
+        int product_id FK
+        int quantity
+    }
+```
+
 ### Authentication
 
 Some API requests will require a valid API key (PUT, DELETE, POST and some GET).
