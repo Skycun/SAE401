@@ -18,6 +18,13 @@ This RESTful API allows access to our store management system data, including br
 | PUT | `/brands` | Update a brand |
 | DELETE | `/brands` | Delete a brand |
 
+```json
+{
+  "id": 1,              // Required for PUT requests
+  "brand_name": "Trek"  // Required string
+}
+```
+
 #### 📚 Categories
 
 | Method | URL | Description |
@@ -28,6 +35,13 @@ This RESTful API allows access to our store management system data, including br
 | POST | `/categories` | Create a new category |
 | PUT | `/categories` | Update a category |
 | DELETE | `/categories` | Delete a category |
+
+```json
+{
+  "id": 1,                   // Required for PUT requests
+  "category_name": "Mountain Bikes"  // Required string
+}
+```
 
 #### 🛍️ Products
 
@@ -42,6 +56,17 @@ This RESTful API allows access to our store management system data, including br
 | PUT | `/products` | Update a product |
 | DELETE | `/products` | Delete a product |
 
+```json
+{
+  "id": 1,                      // Required for PUT requests
+  "product_name": "Trail Bike", // Optional string
+  "brand_id": 1,                // Optional integer - must exist in brands table
+  "category_id": 2,             // Optional integer - must exist in categories table
+  "model_year": 2023,           // Optional integer
+  "list_price": 1299.99         // Optional float
+}
+```
+
 #### 👥 Employees
 
 | Method | URL | Description |
@@ -50,10 +75,21 @@ This RESTful API allows access to our store management system data, including br
 | GET | `/employees/{id}` | Get a specific employee by ID |
 | GET | `/employees/search/{query}` | Search employees by name |
 | GET | `/employees/store/{store_id}` | Get employees by store |
-| POST | `/employees/login` | Authenticate an employee |
+| POST | `/employees/login` | Authenticate an employee, and return the employees object |
 | POST | `/employees` | Create a new employee |
 | PUT | `/employees` | Update an employee |
 | DELETE | `/employees` | Delete an employee |
+
+```json
+{
+  "id": 1,                                // Required for PUT requests
+  "employees_name": "John Doe",           // Optional string
+  "employees_email": "john@example.com",  // Optional string (must be unique)
+  "employees_password": "secure123",      // Optional string
+  "employees_role": "manager",            // Optional string
+  "store_id": 1                           // Optional integer - must exist in stores table
+}
+```
 
 #### 🏬 Stores
 
@@ -65,6 +101,19 @@ This RESTful API allows access to our store management system data, including br
 | POST | `/stores` | Create a new store |
 | PUT | `/stores` | Update a store |
 | DELETE | `/stores` | Delete a store |
+
+```json
+{
+  "id": 1,                              // Required for PUT requests
+  "store_name": "Downtown Bike Shop",   // Optional string
+  "phone": "(123) 456-7890",            // Optional string
+  "email": "contact@bikestore.com",     // Optional string
+  "street": "123 Main St",              // Optional string
+  "city": "New York",                   // Optional string
+  "state": "NY",                        // Optional string
+  "zip_code": "10001"                   // Optional string
+}
+```
 
 #### 📊 Stocks
 
@@ -79,9 +128,19 @@ This RESTful API allows access to our store management system data, including br
 | PUT | `/stocks` | Update a stock |
 | DELETE | `/stocks` | Delete a stock |
 
+```json
+{
+  "id": 1,          // Required for PUT requests
+  "store_id": 1,    // Optional integer - must exist in stores table
+  "product_id": 1,  // Optional integer - must exist in products table
+  "quantity": 10    // Optional integer
+}
+```
+
 ### Authentication
 
-All API requests require a valid API key. Add the Api header to your requests:
+Some API requests will require a valid API key (PUT, DELETE, POST and some GET).
+Add the Api header to your requests:
 
 ```
 Api: e8f1997c763
