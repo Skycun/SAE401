@@ -224,7 +224,7 @@
             echo json_encode($res);
             break;
         default:
-            throw new Error("Method not found
+            throw new Error("Method not found");
             break;
     }
 
