@@ -94,38 +94,68 @@
                     // Calculer l'offset
                     $offset = ($page - 1) * $limit;
                     
-                    // Requête paginée
-                    $stocks = $stockRepo->createQueryBuilder('s')
-                        ->orderBy('s.stock_id', 'ASC')
+                    // Récupérer les produits paginés
+                    $productRepo = $entityManager->getRepository(Entity\Products::class);
+                    $products = $productRepo->createQueryBuilder('p')
+                        ->orderBy('p.product_id', 'ASC')
                         ->setFirstResult($offset)
                         ->setMaxResults($limit)
                         ->getQuery()
                         ->getResult();
                     
-                    // Obtenir le nombre total d'enregistrements pour calculer le nombre total de pages
-                    $totalStocks = $stockRepo->createQueryBuilder('s')
-                        ->select('COUNT(s.stock_id)')
+                    // Obtenir le nombre total de produits pour calculer le nombre total de pages
+                    $totalProducts = $productRepo->createQueryBuilder('p')
+                        ->select('COUNT(p.product_id)')
                         ->getQuery()
                         ->getSingleScalarResult();
-                
-
-                    $totalPages = ceil($totalStocks / $limit);
                     
-                    $stocksArray = [];
-                    foreach($stocks as $stock){
-                        $stocksArray[] = $stock->jsonSerialize();
+                    $totalPages = ceil($totalProducts / $limit);
+                    
+                    // Préparer le tableau de résultats
+                    $productsWithStocks = [];
+                    
+                    // Pour chaque produit, récupérer ses stocks dans tous les magasins
+                    foreach ($products as $product) {
+                        $productData = $product->jsonSerialize();
+                        
+                        // Récupérer tous les stocks pour ce produit
+                        $stocks = $stockRepo->createQueryBuilder('s')
+                            ->where('s.product = :product')
+                            ->setParameter('product', $product)
+                            ->getQuery()
+                            ->getResult();
+                        
+                        // Formater les données de stock par magasin
+                        $stocksByStore = [];
+                        foreach ($stocks as $stock) {
+                            $stocksByStore[] = [
+                                'stock_id' => $stock->getStockId(),
+                                'store' => [
+                                    'store_id' => $stock->getStore()->getStoreId(),
+                                    'store_name' => $stock->getStore()->getStoreName()
+                                ],
+                                'quantity' => $stock->getQuantity()
+                            ];
+                        }
+                        
+                        // Ajouter les stocks au produit
+                        $productData['stocks'] = $stocksByStore;
+                        
+                        // Ajouter le produit au tableau de résultats
+                        $productsWithStocks[] = $productData;
                     }
                     
                     // Inclure les métadonnées de pagination dans la réponse
                     $response = [
-                        'data' => $stocksArray,
+                        'data' => $productsWithStocks,
                         'pagination' => [
                             'page' => $page,
                             'limit' => $limit,
-                            'totalItems' => $totalStocks,
+                            'totalItems' => $totalProducts,
                             'totalPages' => $totalPages
                         ]
                     ];
+                    
                     echo json_encode($response);
                     break;
                 default:
