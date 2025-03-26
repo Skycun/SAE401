@@ -8,5 +8,6 @@ export default defineNuxtConfig({
       charset: 'utf-8',
       title: 'Bike Stores'
     }
-  }
+  },
+  css: ['/public/assets/css/main.css']
 })

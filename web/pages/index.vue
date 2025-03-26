@@ -23,14 +23,11 @@
     <!-- Des Produits mis en avant -->
     <section class="grid grid-cols-2 px-5 gap-5">
         <!-- Mobile Card -->
-        <div class="bg-indigo-600 rounded-[20px] h-2 "></div>
+        <div class="bg-[#F3F3F3] rounded-[20px] h-56"></div>
 
 
     </section>
 </template>
 
 <style scoped>
-    h2, button{
-        font-family: NeuePower;
-    }
 </style>
