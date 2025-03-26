@@ -27,6 +27,8 @@
             <MobileCard :product="product"/>
          </div>
     </section>
+    <h2 class="text-2xl m-10 flex justify-center">Our Stores</h2>
+    <div id="mapdiv"></div>
 </template>
 
 <script setup>
