@@ -23,11 +23,12 @@
     <!-- Des Produits mis en avant -->
     <section class="grid grid-cols-2 px-5 gap-5">
         <!-- Mobile Card -->
-        <MobileCard />
+         <div v-for="product in data.data">
+            <MobileCard :product="product"/>
+         </div>
     </section>
 </template>
 
 <script setup>
-//const {data: products} = await useFetch('');
-//console.log(products);
+const {data} = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks/page/1');
 </script>
