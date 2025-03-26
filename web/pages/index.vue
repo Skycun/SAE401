@@ -8,6 +8,14 @@
                 Discover
              </button>
         </div>
+        <div class="grid grid-cols-2 mt-5 gap-5">
+            <div class="bg-indigo-600 ml-5 rounded-[20px] aspect-square">
+
+            </div>
+            <div class="bg-indigo-600 mr-5 rounded-[20px] aspect-square">
+
+            </div>
+        </div>
     </section>
 </template>
 
