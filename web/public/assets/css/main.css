@@ -2,6 +2,6 @@ body{
     background-color: #F3F3F3;
 }
 
-h2, button{
+h2, h3, button, p{
     font-family: NeuePower;
 }

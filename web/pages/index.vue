@@ -23,7 +23,12 @@
     <!-- Des Produits mis en avant -->
     <section class="grid grid-cols-2 px-5 gap-5">
         <!-- Mobile Card -->
-        <div class="bg-[#F3F3F3] rounded-[20px] h-56"></div>
+        <div class="bg-white rounded-[20px] h-56 p-5">
+            <img src="../public/images/packshots/ps1.png" alt="Image de vélo" class="max-h-20 justify-center mx-auto">
+            <h3 class="leading-4 break-all">Ritchey Timberwolf Frameset - 2016</h3>
+            <h3 class="text-indigo-600 text-xl">749.99$</h3>
+            <ReverseButton>See product</ReverseButton>
+        </div>
 
 
     </section>
