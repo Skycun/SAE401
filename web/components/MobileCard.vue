@@ -16,4 +16,6 @@ defineProps({
     }
 })
 
+const randomImage = ref();
+console.log(randomImage.value);
 </script>

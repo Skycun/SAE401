@@ -28,5 +28,6 @@
 </template>
 
 <script setup>
-const {data: products} = await useFetch('');
+//const {data: products} = await useFetch('');
+//console.log(products);
 </script>
