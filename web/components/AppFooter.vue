@@ -5,7 +5,3 @@
         <p>Copyright © Brice Ledanois - 2025</p>
     </footer>
 </template>
-
-
-<script setup>
-</script>

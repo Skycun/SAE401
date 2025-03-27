@@ -5,3 +5,7 @@ body{
 h2, h3, button, p{
     font-family: NeuePower;
 }
+
+footer p{
+    font-family: Outfit;
+}
