@@ -8,11 +8,7 @@
         <p>{{ product.brand.brand_name }} - {{ product.model_year }}</p>
         <p>{{ product.category.category_name }}</p>
         <p class="text-indigo-600 text-lg">in Stock</p>
-    </div>
-
-    <div>
-        <h1>Product page {{ route.params.id }}</h1>
-        <p>{{ product.product_name }}</p>
+        <Button class="text-xl p-3 mt-5">Buy Now</Button>
     </div>
 </template>
 
