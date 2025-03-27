@@ -20,11 +20,11 @@
                 <p class="self-center flex justify-between m-auto text-xl text-indigo-600">{{ stocks.store.store_name }}</p>
             </div>
             <p v-if="stocks.quantity > 0" class="text-lg text-indigo-600 flex justify-center">{{ stocks.quantity }} in Stock</p>
-            <p v-else class="text-lg text-red-600 flex justify-center">0 in stocks s</p>
+            <p v-else class="text-lg text-red-600 flex justify-center">0 in stocks</p>
         </div>
     </div>
     <div>
-            <h2 class="text-2xl flex justify-center mb-10">More about this brand</h2>
+        <h2 class="text-2xl flex justify-center mb-10">More about this brand</h2>
     </div>
 </template>
 
@@ -40,7 +40,4 @@ watch(product, (newProduct) => {
     inStocks.value = newProduct.stocks.reduce((total, stock) => total + stock.quantity, 0);
   }
 });
-
-const { data:brand_prod} = useFetch(`https://mirrorsoul.alwaysdata.net/sae401/API/API/products/brand/${product.brand.brand_id}`);
-
 </script>
