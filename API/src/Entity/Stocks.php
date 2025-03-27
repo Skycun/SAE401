@@ -82,12 +82,13 @@ class Stocks
 
     public function jsonSerialize()
     {
-        $res = Array(
-            "stock_id" => $this->stock_id,
-            "store" => $this->store->jsonSerialize(),
-            "product" => $this->product->jsonSerialize(),
-            "quantity" => $this->quantity
-        );
-        return $res;
+        return [
+            'stock_id' => $this->getStockId(),
+            'store' => [
+                'store_id' => $this->getStore()->getStoreId(),
+                'store_name' => $this->getStore()->getStoreName()
+            ],
+            'quantity' => $this->getQuantity()
+        ];
     }
 }

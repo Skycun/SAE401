@@ -54,7 +54,6 @@ class Products
     public function __construct()
     {
         $this->stocks = new ArrayCollection();
-        // ...existing constructor code...
     }
 
     // Getters and Setters
@@ -224,6 +223,9 @@ class Products
             'category' => $this->getCategory()->jsonSerialize(),
             'model_year' => $this->getModelYear(),
             'list_price' => $this->getListPrice(),
+            'stocks' => array_map(function ($stock) {
+                return $stock->jsonSerialize();
+            }, $this->getStocks()->toArray())
         ];
         return $res;
     }
