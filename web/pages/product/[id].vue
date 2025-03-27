@@ -7,14 +7,40 @@
         <h3 class="text-indigo-600 text-3xl">{{ product.list_price }}$</h3>
         <p>{{ product.brand.brand_name }} - {{ product.model_year }}</p>
         <p>{{ product.category.category_name }}</p>
-        <p class="text-indigo-600 text-lg">in Stock</p>
+
+        <p v-if="inStocks > 0" class="text-indigo-600 text-lg">{{ inStocks }} in Stock</p>
+        <p v-else class="text-red-600 text-lg">0 in Stock</p>
         <Button class="text-xl p-3 mt-5">Buy Now</Button>
+    </div>
+    <div class="bg-white min-h-20 my-10 m-5 rounded-[20px] p-5">
+        <h2 class="text-2xl">Choose your Store</h2>
+        <!-- Stores -->
+        <div v-for="stocks in product.stocks">
+            <div class="border-2 border-indigo-600 p-3 rounded-[20px] mt-5 flex justify-between self-center">
+                <p class="self-center flex justify-between m-auto text-xl text-indigo-600">{{ stocks.store.store_name }}</p>
+            </div>
+            <p v-if="stocks.quantity > 0" class="text-lg text-indigo-600 flex justify-center">{{ stocks.quantity }} in Stock</p>
+            <p v-else class="text-lg text-red-600 flex justify-center">0 in stocks s</p>
+        </div>
+    </div>
+    <div>
+            <h2 class="text-2xl flex justify-center mb-10">More about this brand</h2>
     </div>
 </template>
 
 <script setup>
 const route = useRoute();
 
-const { data:product} = await useFetch(`https://mirrorsoul.alwaysdata.net/sae401/API/API/products/${route.params.id}`);
+const inStocks = ref(0);
+const { data:product} = useFetch(`https://mirrorsoul.alwaysdata.net/sae401/API/API/products/${route.params.id}`);
+
+// Surveiller les changements dans `product` et calculer le stock total
+watch(product, (newProduct) => {
+  if (newProduct && newProduct.stocks) {
+    inStocks.value = newProduct.stocks.reduce((total, stock) => total + stock.quantity, 0);
+  }
+});
+
+const { data:brand_prod} = useFetch(`https://mirrorsoul.alwaysdata.net/sae401/API/API/products/brand/${product.brand.brand_id}`);
 
 </script>
