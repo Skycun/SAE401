@@ -55,9 +55,7 @@
             </LMarker>
         </LMap>
     </div>
-    <footer>
-        FOOTER
-    </footer>
+    <AppFooter />
 </template>
 
 
