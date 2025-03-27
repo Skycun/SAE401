@@ -4,5 +4,6 @@
     <NuxtRouteAnnouncer />
     <AppHeader />
     <NuxtPage />
+    <AppFooter />
   </div>
 </template>
