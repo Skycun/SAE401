@@ -85,38 +85,6 @@
                     
                     echo json_encode($productsArray);
                     break;
-                case "advancedSearch":
-                    $data = json_decode(file_get_contents("php://input"), true);
-                    $priceMin = isset($data["priceMin"]) ? $data["priceMin"] : 0;
-                    $priceMax = isset($data["priceMax"]) ? $data["priceMax"] : 10000;
-                    $modelYear = isset($data["model_year"]) ? $data["model_year"] : null;
-                    $brand = isset($data["brand_id"]) ? $entityManager->getRepository(Brands::class)->find($data["brand_id"]) : null;
-                    $category = isset($data["category_id"]) ? $entityManager->getRepository(Categories::class)->find($data["category_id"]) : null;
-                    $querry = isset($data["q"]) ? $data["q"] : null;
-                    
-                    
-                    $products = $productRepo->createQueryBuilder('p')
-                        ->where('p.list_price BETWEEN :priceMin AND :priceMax AND p.product_name LIKE :query')
-                        ->setParameter('query', '%' . $querry . '%')
-                        ->setParameter('priceMin', $priceMin)
-                        ->setParameter('priceMax', $priceMax)
-                        ->andWhere('p.model_year = :modelYear OR :modelYear IS NULL')
-                        ->setParameter('modelYear', $modelYear)
-                        ->andWhere('p.brand = :brand OR :brand IS NULL')
-                        ->setParameter('brand', $brand)
-                        ->andWhere('p.category = :category OR :category IS NULL')
-                        ->setParameter('category', $category)
-                        ->getQuery()
-                        ->getResult();
-                    $productsArray = [];
-                    foreach($products as $product){
-                        $productsArray[] = $product->jsonSerialize();
-                    }
-                    if(count($productsArray) == 0){
-                        throw new Error("No products found matching your search");
-                    }
-                    echo json_encode($productsArray);
-                    break;
                 //f the action is brand, return the product of the brand
                 case 'brand':
                     if(!isset($_REQUEST["brand_id"])){
