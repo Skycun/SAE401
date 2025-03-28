@@ -52,6 +52,7 @@ This RESTful API allows access to our store management system data, including br
 | GET | `/products/search/{query}` | Search products by name |
 | GET | `/products/category/{category_id}` | Get products by category |
 | GET | `/products/brand/{brand_id}` | Get products by brand |
+| GET | `/products/brand/{brand_id}/{number_of_products}` | Get a number of product a by brand |
 | POST | `/products` | Create a new product |
 | PUT | `/products` | Update a product |
 | DELETE | `/products` | Delete a product |
