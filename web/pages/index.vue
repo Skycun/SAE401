@@ -63,7 +63,7 @@ import { ref, computed, onMounted } from 'vue';
 
 const zoom = ref(6);
 const mapCenter = ref([39.8283, -98.5795]); // Centre des États-Unis par défaut
-const {data} = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks/page/1');
+const {data} = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks/page/1');
 const {data:storesData} = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stores');
 
 // Stocker les magasins avec leurs coordonnées
