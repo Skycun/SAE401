@@ -1,6 +1,6 @@
 # Basic configuration
-#Allow From All
-#Satisfy Any
+Allow From All
+Satisfy Any
 #Options FollowSymLinks
 RewriteEngine On
 
