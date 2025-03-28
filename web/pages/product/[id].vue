@@ -38,6 +38,6 @@
 const route = useRoute();
 
 const { data:product} = await useFetch(`https://mirrorsoul.alwaysdata.net/sae401/API/API/products/${route.params.id}`);
-const { data:brandProduct} = await useLazyFetch(`https://mirrorsoul.alwaysdata.net/sae401/API/API/products/brand/${product.value.brand.brand_id}`);
+const { data:brandProduct} = await useLazyFetch(`https://mirrorsoul.alwaysdata.net/sae401/API/API/products/brand/${product.value.brand.brand_id}/10`);
 
 </script>
