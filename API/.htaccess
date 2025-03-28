@@ -46,6 +46,11 @@ RewriteRule ^products/([0-9]+)/?$ api_requests/Products.php?action=get&id=$1 [L,
 # Search products by name
 RewriteRule ^products/search/([^/]+)/?$ api_requests/Products.php?action=search&q=$1 [L,QSA]
 
+
+# Search with multiple filtrer
+RewriteRule ^products/advancedsearch/?$ api_requests/Products.php?action=advancedSearch [L,QSA]
+
+
 # Get products by category
 RewriteRule ^products/category/([0-9]+)/?$ api_requests/Products.php?action=category&category_id=$1 [L,QSA]
 
