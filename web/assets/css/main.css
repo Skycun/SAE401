@@ -1,9 +1,11 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
 body{
     background-color: #F3F3F3;
 }
 
 h2, h3, button, p{
-    color: #1E1A4D;
     font-family: NeuePower;
 }
 

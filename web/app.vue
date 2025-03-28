@@ -1,9 +1,9 @@
 <template>
-  <div>
-    <NuxtLoadingIndicator />
-    <NuxtRouteAnnouncer />
-    <AppHeader />
-    <NuxtPage />
-    <AppFooter />
-  </div>
+    <UApp>
+        <NuxtLoadingIndicator />
+        <NuxtRouteAnnouncer />
+        <AppHeader />
+        <NuxtPage />
+        <AppFooter />
+    </UApp>
 </template>

@@ -27,7 +27,7 @@
             <MobileCard :product="product"/>
          </div>
     </section>
-    <h2 class="text-2xl m-10 flex justify-center">Our Stores</h2>
+    <h2 class="text-2xl m-10 flex justify-center text-indigo-950">Our Stores</h2>
     <div class="mx-5 rounded-[20px] aspect-square mb-10">
         <LMap
         ref="map"
