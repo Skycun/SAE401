@@ -94,6 +94,15 @@
                     if($brand == null){
                         throw new Error("Brand not found");
                     }
+
+                    if(isset($_REQUEST["limit"])  && $_REQUEST["limit"] > 0){
+                        $products = $productRepo->findBy(["brand" => $brand], null, $_REQUEST["limit"]);
+                        foreach($products as $product){
+                            $productsArray[] = $product->jsonSerialize();
+                        }
+                        echo json_encode($productsArray);
+                        break;
+                    }
                     $brand->getProducts();
                     $productsArray = [];
                     foreach($brand->getProducts() as $product){
