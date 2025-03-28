@@ -9,6 +9,7 @@ h2, h3, button, p{
     font-family: NeuePower;
 }
 
-footer p{
+footer p input{
     font-family: Outfit;
+    color: #000000;
 }

@@ -3,5 +3,6 @@
         <img src="../public/images/Bikestoreslogo.png" alt="Bike Stores" class="h-8">
         <p class="text-indigo-950">CGU / CGS</p>
         <p class="text-indigo-950">Copyright © Brice Ledanois - 2025</p>
+        <a href="https://github.com/Skycun/SAE401"><p class="text-indigo-950">Projet de SAE 401</p></a>
     </footer>
 </template>
