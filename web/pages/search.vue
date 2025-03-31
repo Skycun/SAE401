@@ -49,8 +49,12 @@
 
 <script setup>
 
-
+const route = useRoute();
 const query = ref('');
+if(route.query.q) {
+    query.value = route.query.q;
+}
+
 const minPrice = ref(0);
 const maxPrice = ref(12000);
 const minYear = ref(2016);
@@ -96,7 +100,7 @@ const CategorySelect = computed(() => {
 
 
 // Récupération des produits depuis l'API
-const { data: products } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/products');
+const { data: products } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/products');
 
 // Création d'une propriété calculée qui filtrera automatiquement les produits
 const filteredProducts = computed(() => {

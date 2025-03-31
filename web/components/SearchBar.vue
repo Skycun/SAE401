@@ -4,6 +4,7 @@
             type="text" 
             :value="modelValue"
             @input="$emit('update:modelValue', $event.target.value)"
+            @keyup.enter="handleSearch"
             class="w-full placeholder-indigo-900 bg-indigo-200 rounded-3xl h-14 px-6" 
             placeholder="Search for a product, a brand..."
         >
@@ -11,6 +12,7 @@
 </template>
 
 <script setup>
+const router = useRouter();
 
 const props = defineProps({
   modelValue: {
@@ -18,6 +20,15 @@ const props = defineProps({
     default: ''
   }
 });
+
+function handleSearch() {
+  if (props.modelValue.trim()) {
+    router.push({
+      path: '/search',
+      query: { q: props.modelValue }
+    });
+  }
+}
 
 const emit = defineEmits(['update:modelValue']);
 </script>
