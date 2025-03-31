@@ -18,9 +18,12 @@
         $headers = getallheaders();        
         // Vérifier si la clé est présente dans les headers
         if (!isset($headers['Api']) || $headers['Api'] !== API_KEY) {
-            header('HTTP/1.1 401 Unauthorized');
-            echo json_encode(['error' => 'Invalid API Key']);
-            exit();
+            if($_REQUEST["action"] != "login"){
+                // Si la clé n'est pas valide, renvoyer une réponse 401 Unauthorized
+                header('HTTP/1.1 401 Unauthorized');
+                echo json_encode(['error' => 'Invalid API Key']);
+                exit();
+            }
         }
     }
     
@@ -90,55 +93,59 @@
                     }
                     echo json_encode($employeesArray);
                     break;
-                case "login":
-                    $data = json_decode(file_get_contents("php://input"), true);
-                    if(!isset($data["email"]) || !isset($data["password"])){
-                        throw new Error("Some data is missing, check your : email, password");
-                        break;
-                    }
-                    $employee = $EmpRepo->findOneBy(["employees_email" => $data["email"], "employees_password" => $data["password"]]);
-                    if($employee == null){
-                        throw new Error("Employee not found, check your email and password");
-                    }
-                    $employee->setEmployeesPassword("********");
-                    $res = Array("state" => "success", "message" => "You are connected", "employee" => $employee->jsonSerialize());
-
-                    echo json_encode($res);
-                    break;
-
                 default:
                     throw new Error("Action not found");
                     break;
                 }
                 break;
         case "POST":
-            $data = json_decode(file_get_contents("php://input"), true);
-            if(!isset($data["employees_name"]) || !isset($data["employees_email"]) || !isset($data["employees_password"]) || !isset($data["employees_role"]) || !isset($data["store_id"])){
-                throw new Error("Some data is missing, check your : employees_name, employees_email, employees_password, employees_role, store_id");
+            if(!isset($_REQUEST["action"]) || $_REQUEST["action"] == "create"){
+                $data = json_decode(file_get_contents("php://input"), true);
+                if(!isset($data["employees_name"]) || !isset($data["employees_email"]) || !isset($data["employees_password"]) || !isset($data["employees_role"]) || !isset($data["store_id"])){
+                    throw new Error("Some data is missing, check your : employees_name, employees_email, employees_password, employees_role, store_id");
+                    break;
+                }
+    
+                //Créer l'employée
+                $employee = new Employees();
+                //Met le nom de l'employee
+                $employee->setEmployeesName($data["employees_name"]);
+                //Met l'email de l'employee
+                $employee->setEmployeesEmail($data["employees_email"]);
+                //Met le mot de passe de l'employee
+                $employee->setEmployeesPassword($data["employees_password"]);
+                //Met le role de l'employee
+                $employee->setEmployeesRole($data["employees_role"]);
+                //Met le store de l'employee
+                $store = $entityManager->getRepository(Stores::class)->find($data["store_id"]);
+                if($store == null){
+                    throw new Error("Store not found, change the store_id");
+                }
+                $employee->setStore($store);
+                $entityManager->persist($employee);
+                $entityManager->flush();
+                $res = Array("state" => "success", "employee" => $employee->jsonSerialize());
+                echo json_encode($res);
+                break;
+            }
+            if($_REQUEST["action"] == "login"){
+                $data = json_decode(file_get_contents("php://input"), true);
+                if(!isset($data["email"]) || !isset($data["password"])){
+                    throw new Error("Some data is missing, check your : email, password");
+                    break;
+                }
+                $employee = $EmpRepo->findOneBy(["employees_email" => $data["email"], "employees_password" => $data["password"]]);
+                if($employee == null){
+                    throw new Error("Employee not found, check your email and password");
+                }
+                $employee->setEmployeesPassword("********");
+                $res = Array("state" => "success", "message" => "You are connected", "employee" => $employee->jsonSerialize());
+                echo json_encode($res);
                 break;
             }
 
-            //Créer l'employée
-            $employee = new Employees();
-            //Met le nom de l'employee
-            $employee->setEmployeesName($data["employees_name"]);
-            //Met l'email de l'employee
-            $employee->setEmployeesEmail($data["employees_email"]);
-            //Met le mot de passe de l'employee
-            $employee->setEmployeesPassword($data["employees_password"]);
-            //Met le role de l'employee
-            $employee->setEmployeesRole($data["employees_role"]);
-            //Met le store de l'employee
-            $store = $entityManager->getRepository(Stores::class)->find($data["store_id"]);
-            if($store == null){
-                throw new Error("Store not found, change the store_id");
-            }
-            $employee->setStore($store);
-            $entityManager->persist($employee);
-            $entityManager->flush();
-            $res = Array("state" => "success", "employee" => $employee->jsonSerialize());
-            echo json_encode($res);
-            break;
+
+
 
         case "DELETE":
             $EmpRepo = $entityManager->getRepository(Employees::class);
