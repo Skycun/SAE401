@@ -34,7 +34,7 @@
         </template>
     </UCollapsible>
 
-    <p v-if="filteredProducts.length === 0" class="text-center mt-5 text-sky-950">No product found</p>
+    <p v-if="filteredProducts.length === 0" class="text-center mt-5 text-sky-950 mb-16">No product found</p>
 
     <!-- Des Produits mis en avant -->
     <div v-else class="mb-5">
@@ -51,6 +51,8 @@
 
 const route = useRoute();
 const query = ref('');
+console.log(route.query);
+
 if(route.query.q) {
     query.value = route.query.q;
 }
