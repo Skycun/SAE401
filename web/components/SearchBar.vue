@@ -4,7 +4,7 @@
           type="text" 
           v-model="inputValue"
           @keyup.enter="handleSearch"
-          class="w-full placeholder-indigo-900 bg-indigo-200 text-indigo-950 rounded-3xl h-14 px-6" 
+          class="w-full placeholder-indigo-900 bg-indigo-200 text-indigo-950 rounded-full h-14 px-6" 
           placeholder="Search for a product, a brand..."
       >
   </div>

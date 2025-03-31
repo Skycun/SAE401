@@ -5,11 +5,15 @@ body{
     background-color: #F3F3F3;
 }
 
-h2, h3, button, p{
+h2, h3, button, p, label{
     font-family: NeuePower;
 }
 
 footer p input{
     font-family: Outfit;
+    color: #000000;
+}
+
+label{
     color: #000000;
 }
