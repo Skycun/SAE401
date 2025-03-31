@@ -93,8 +93,6 @@
                     $brand = isset($data["brand_id"]) ? $entityManager->getRepository(Brands::class)->find($data["brand_id"]) : null;
                     $category = isset($data["category_id"]) ? $entityManager->getRepository(Categories::class)->find($data["category_id"]) : null;
                     $querry = isset($data["q"]) ? $data["q"] : null;
-                    
-                    
                     $products = $productRepo->createQueryBuilder('p')
                         ->where('p.list_price BETWEEN :priceMin AND :priceMax AND p.product_name LIKE :query')
                         ->setParameter('query', '%' . $querry . '%')
