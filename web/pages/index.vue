@@ -23,9 +23,13 @@
         <!-- Des Produits mis en avant -->
         <section class="grid grid-cols-2 px-5 gap-5">
             <!-- Mobile Card -->
-            <div v-for="product in data.data">
+            <div v-if="data && data.data" v-for="product in data.data">
                 <MobileCard :product="product"/>
             </div>
+            <div v-else-if="pending" class="flex justify-center items-center h-screen">
+                <p>Loading</p>
+            </div>
+            
         </section>
         <h2 class="text-2xl m-10 flex justify-center text-indigo-950">Our Stores</h2>
         <div class="mx-5 rounded-[20px] aspect-square mb-10">
@@ -63,8 +67,8 @@
 
     const zoom = ref(6);
     const mapCenter = ref([39.8283, -98.5795]); // Centre des États-Unis par défaut
-    const {data} = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks/page/1');
-    const {data:storesData} = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stores');
+    const { data, pending, error } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks/page/1');
+    const {data:storesData} = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stores');
 
     // Stocker les magasins avec leurs coordonnées
     const storesWithCoordinates = ref([]);
