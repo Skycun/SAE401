@@ -19,7 +19,7 @@
         $headers = getallheaders();        
         // Vérifier si la clé est présente dans les headers
         if (!isset($headers['Api']) || $headers['Api'] !== API_KEY) {
-            if($_REQUEST["action"] != "login"){
+            if(!isset($_REQUEST["action"]) || $_REQUEST["action"] != "login"){
                 // Si la clé n'est pas valide, renvoyer une réponse 401 Unauthorized
                 header('HTTP/1.1 401 Unauthorized');
                 echo json_encode(['error' => 'Invalid API Key']);
