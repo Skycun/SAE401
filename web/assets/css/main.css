@@ -17,3 +17,7 @@ footer p input{
 label{
     color: #000000;
 }
+
+:root {
+    --ui-primary: #4f46e5;
+  }
