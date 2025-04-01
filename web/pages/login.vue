@@ -29,7 +29,7 @@ async function login(){
     let res = await fetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/employees/login', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'?
+            'Content-Type': 'application/json',
             "Api": "e8f1997c763"
         },
         body: JSON.stringify(data)

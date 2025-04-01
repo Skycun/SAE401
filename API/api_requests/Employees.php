@@ -1,6 +1,7 @@
 <?php
     //Config
     header("Content-Type: application/json; charset=UTF-8");
+    header("Access-Control-Allow-Headers: Content-Type, Authorization, Api");
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
 
@@ -129,6 +130,7 @@
                 break;
             }
             if($_REQUEST["action"] == "login"){
+                $EmpRepo = $entityManager->getRepository(Employees::class);
                 $data = json_decode(file_get_contents("php://input"), true);
                 if(!isset($data["email"]) || !isset($data["password"])){
                     throw new Error("Some data is missing, check your : email, password");
