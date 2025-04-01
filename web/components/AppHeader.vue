@@ -60,6 +60,7 @@ if(!user_data.value){
             {
                 label: 'Dashboard',
                 icon: 'i-lucide-grid',
+                to: '/admin'
             },
             {
                 label: 'Database',
@@ -68,27 +69,33 @@ if(!user_data.value){
                     [
                     {
                         label: 'Brands',
-                        icon: 'i-lucide-mail'
+                        icon: 'bx:bookmark',
+                        to: '/admin/database/brands'
                     },
                     {
                         label: 'Categories',
-                        icon: 'i-lucide-mail'
+                        icon: 'bx:bxs-cabinet',
+                        to: '/admin/database/categories'
                     },
                     {
                         label: 'Employees',
-                        icon: 'i-lucide-mail'
+                        icon: 'bx:bxs-user-badge',
+                        to: '/admin/database/employees'
                     },
                     {
                         label: 'Products',
-                        icon: 'i-lucide-mail'
+                        icon: 'bx:bxs-cube',
+                        to: '/admin/database/products'
                     },
                     {
                         label: 'Stocks',
-                        icon: 'i-lucide-mail'
+                        icon: 'bx:box',
+                        to: '/admin/database/stocks'
                     },
                     {
                         label: 'Stores',
-                        icon: 'i-lucide-mail'
+                        icon: 'bx:bxs-store',
+                        to: '/admin/database/stores'
                     }
                     ],
                 ]

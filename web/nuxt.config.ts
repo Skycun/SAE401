@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   app: {
     head: {
-      title: "BikeStores", // Titre principal du site
+      title: "Bike Stores",
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' }
