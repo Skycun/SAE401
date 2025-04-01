@@ -59,8 +59,39 @@ if(!user_data.value){
             },
             {
                 label: 'Dashboard',
+                icon: 'i-lucide-grid',
+            },
+            {
+                label: 'Database',
                 icon: 'material-symbols:database-outline',
-                to: '/admin'
+                children: [
+                    [
+                    {
+                        label: 'Brands',
+                        icon: 'i-lucide-mail'
+                    },
+                    {
+                        label: 'Categories',
+                        icon: 'i-lucide-mail'
+                    },
+                    {
+                        label: 'Employees',
+                        icon: 'i-lucide-mail'
+                    },
+                    {
+                        label: 'Products',
+                        icon: 'i-lucide-mail'
+                    },
+                    {
+                        label: 'Stocks',
+                        icon: 'i-lucide-mail'
+                    },
+                    {
+                        label: 'Stores',
+                        icon: 'i-lucide-mail'
+                    }
+                    ],
+                ]
             }
         ],
         [
