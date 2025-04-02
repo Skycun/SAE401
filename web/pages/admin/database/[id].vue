@@ -76,12 +76,14 @@ async function deleteItem() {
     });
     console.log(data.value);
     const toast = useToast();
-    toast.add({
+    if(data.value){
+        toast.add({
         title: 'Item deleted',
         description: `The item ${itemToEdit.value.label} from ${table.value} has been deleted`
     });
     openModal.value = false;
     itemToEdit.value = null;
+    }
 }
 
 
