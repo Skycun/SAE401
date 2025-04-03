@@ -14,11 +14,18 @@
 
     // Vérifier la clé API
     function validateApiKey() {
-        $headers = getallheaders();        
-        if($_SERVER["REQUEST_METHOD"] == "GET"){ //Si la méthode est GET, on ne vérifie pas la clé API
+        $headers = getallheaders();
+        
+        // Exempter les requêtes OPTIONS de la vérification API
+        if($_SERVER["REQUEST_METHOD"] == "OPTIONS"){
             return;
         }
-
+        
+        // Pour l'action login et les requêtes GET, exempter de la vérification
+        if(isset($_REQUEST["action"]) && $_REQUEST["action"] == "login" || $_SERVER["REQUEST_METHOD"] == "GET"){
+            return;
+        }
+        
         // Vérifier si la clé est présente dans les headers
         if (!isset($headers['Api']) || $headers['Api'] !== API_KEY) {
             header('HTTP/1.1 401 Unauthorized');
