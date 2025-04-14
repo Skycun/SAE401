@@ -91,6 +91,9 @@ RewriteRule ^stocks/?$ api_requests/Stocks.php [L,QSA]
 # Get specific stock by ID
 RewriteRule ^stocks/([0-9]+)/?$ api_requests/Stocks.php?action=get&id=$1 [L,QSA]
 
+# Get specific stock by store_id
+RewriteRule ^stocks/store/([0-9]+)/?$ api_requests/Stocks.php?action=getFromStore&store_id=$1 [L,QSA]
+
 # Search stocks by quantity parameters
 RewriteRule ^stocks/page/([0-9]+)/?$ api_requests/Stocks.php?action=paginate&limit=25&page=$1 [L,QSA]
 
