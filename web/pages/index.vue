@@ -66,7 +66,7 @@
                     :lat-lng="[userPosition.lat, userPosition.lng]">
                     <LPopup>
                         <div>
-                            <p>Vous</p>
+                            <p>Votre position</p>
                         </div>
                     </LPopup>
                 </LMarker>
