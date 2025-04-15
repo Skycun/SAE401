@@ -100,8 +100,10 @@ const modelData = ref({
 });
 
 // Charger les employés et les magasins au démarrage
-fetchEmployees();
-fetchStores();
+onMounted(() => {
+    fetchEmployees(); 
+    fetchStores();
+});
 
 async function fetchEmployees(){
     loading.value = true;

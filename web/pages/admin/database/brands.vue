@@ -56,7 +56,9 @@ const modelData = ref({
     brand_name: null
 });
 
-fetchBrands();
+onMounted(() => {
+    fetchBrands(); 
+});
 
 async function fetchBrands(){
     const { status, data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/brands', {

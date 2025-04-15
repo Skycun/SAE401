@@ -98,7 +98,10 @@ const modelData = ref({
 });
 
 // Charger les magasins au démarrage
-fetchStores();
+
+onMounted(() => {
+    fetchStores(); 
+});
 
 async function fetchStores(){
     loading.value = true;

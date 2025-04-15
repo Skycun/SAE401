@@ -54,7 +54,9 @@ const modelData = ref({
     category_name: null
 });
 
-fetchCategories();
+onMounted(() => {
+    fetchCategories(); 
+});
 
 async function fetchCategories(){
     const { status, data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/categories', {

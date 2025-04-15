@@ -94,9 +94,12 @@ const modelData = ref({
 });
 
 // Charger les produits, marques et catégories au démarrage
-fetchProducts();
-fetchBrands();
-fetchCategories();
+
+onMounted(() => {
+    fetchProducts(); 
+    fetchBrands(); 
+    fetchCategories(); 
+});
 
 async function fetchProducts(){
     loading.value = true;
