@@ -88,6 +88,10 @@ class Stocks
                 'store_id' => $this->getStore()->getStoreId(),
                 'store_name' => $this->getStore()->getStoreName()
             ],
+            'product' => [
+                'product_id' => $this->getProduct()->getProductId(),
+                'product_name' => $this->getProduct()->getProductName()
+            ],
             'quantity' => $this->getQuantity()
         ];
     }

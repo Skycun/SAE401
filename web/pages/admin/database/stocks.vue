@@ -19,251 +19,144 @@
     </div>
     <div v-if="action">
         <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select stock to manage</h2>
-            <UFormField label="Store" required>
-                <USelectMenu label="Select a store" v-model="selectedStore" :loading="loadingStores" placeholder="Select a store" class="w-full mb-2" @change="fetchStoreStocks" :items="selectStores"/>
+            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select your stock</h2>
+            <UFormField label="Stores" required>
+                <USelectMenu label="Select a store" v-model="selectedStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores" @change="fetchProductFromStore"/>
             </UFormField>
-            <div v-if="selectedStore && selectedStore.value">
-                <UFormField label="Product Stock" required>
-                    <USelectMenu label="Select a product stock" v-model="selectedStock" :loading="loadingStocks" placeholder="Select a product stock" class="w-full mb-2" @change="fetchSelectedData" :items="selectStocks"/>
+            <div v-if="selectedStores.value">
+                <UFormField label="Products" required>
+                    <USelectMenu label="Select a product" v-model="selectedFetchedProductFromStore" placeholder="Select a product" class="w-full mb-2" @change="getStockById" :items="selectFetchedProductFromStore"/>
                 </UFormField>
-                <div v-if="action.value == 'delete' && selectedStock && selectedStock.value != null">
-                    <Button class="p-3 mt-5 bg-red-600" @click="deleteStock">Delete</Button>
-                </div>
+            </div>
+            <!-- Si l'action est delete -->
+            <div v-if="action.value == 'delete' && selectedStores.value && selectedFetchedProductFromStore.value">
+                <Button class="p-3 mt-5 bg-red-600" @click="deleteStock">Delete</Button>
+            </div>
+            <!-- Si l'action est edit -->
+            <div v-else-if="action.value == 'edit' && selectedStores.value && selectedFetchedProductFromStore.value">
+                <UFormField label="Quantity" required>
+                    <UInput label="Quantity" placeholder="Enter the quantity" v-model="selectedStock.quantity" class="w-full mb-2"/>
+                </UFormField>
+                <Button class="p-3 mt-5" @click="editStock">Edit</Button>
             </div>
         </div>
         <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
             <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add a stock</h2>
-            <UFormField label="Store" required>
-                <USelectMenu label="Select a store" v-model="modelData.store_id" :loading="loadingStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores"/>
-            </UFormField>
             <UFormField label="Product" required>
-                <USelectMenu label="Select a product" v-model="modelData.product_id" :loading="loadingProducts" placeholder="Select a product" class="w-full mb-2" :items="selectProducts"/>
+                <USelectMenu label="Select a product" v-model="selectedProduct" placeholder="Select a product" class="w-full mb-2" :items="selectProducts"/>
+            </UFormField>
+            <UFormField label="Stores" required>
+                <USelectMenu label="Select a store" v-model="selectedStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores"/>
             </UFormField>
             <UFormField label="Quantity" required>
-                <UInput type="number" label="Quantity" placeholder="Enter the stock quantity" v-model.number="modelData.quantity" class="w-full mb-2"/>
+                <UInput label="Quantity" placeholder="Enter the quantity" v-model="quantity" class="w-full mb-2"/>
             </UFormField>
             <Button class="p-3 mt-5" @click="addStock">Add</Button>
-        </div>
-        <div v-if="action.value == 'edit' && selectedStock && selectedStock.value != null" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Edit a stock</h2>
-            <UFormField label="Store" disabled>
-                <UInput label="Store" :model-value="fetchedSelectedData.store?.store_name || ''" disabled class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Product" disabled>
-                <UInput label="Product" :model-value="fetchedSelectedData.product?.product_name || ''" disabled class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Quantity" required>
-                <UInput type="number" label="Quantity" placeholder="Enter the stock quantity" v-model.number="fetchedSelectedData.quantity" class="w-full mb-2"/>
-            </UFormField>
-            <Button class="p-3 mt-5" @click="editStock">Edit</Button>
         </div>
     </div>
 </template>
 
 <script setup>
+
 const action = ref("");
-const toast = useToast();
+
+const stores = ref('');
+const selectStores = ref({});
+const selectedStores = ref('');
+
+const products = ref('');
+const selectProducts = ref({});
+const selectedProduct = ref('');
+
+const quantity = ref(0);
+
+const fetchedSelectedData = ref(''); 
 const loading = ref(false);
-
-// Stores data
-const stores = ref([]);
-const selectStores = ref([]);
-const loadingStores = ref(false);
-const selectedStore = ref(null);
-
-// Products data
-const products = ref([]);
-const selectProducts = ref([]);
-const loadingProducts = ref(false);
-
-// Stocks data
-const stocks = ref([]);
-const selectStocks = ref([]);
-const loadingStocks = ref(false);
-const selectedStock = ref(null);
-const fetchedSelectedData = ref({});
-
+const toast = useToast()
 const modelData = ref({
-    store_id: null,
-    product_id: null,
-    quantity: 0
+    brand_name: null
 });
 
-// Fetch initial data
+const selectedStock = ref('');
+
+const fetchedProductFromStore = ref('');
+const selectFetchedProductFromStore = ref({});
+const selectedFetchedProductFromStore = ref('');
+
 fetchStores();
 fetchProducts();
 
 async function fetchStores() {
-    loadingStores.value = true;
-    const { data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stores', {
+    const { status, data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stores', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
     });
-    loadingStores.value = false;
-    
-    if (data.value) {
-        stores.value = data.value;
-        selectStores.value = data.value.map((item) => {
-            return {
-                label: item.store_name,
-                value: item.store_id
-            }
-        });
-    } else {
-        toast.add({
-            title: 'Error',
-            description: "Failed to load stores",
-            color: 'error',
-            icon: 'bx:x'
-        });
-    }
+    stores.value = data.value;
+    loading.value = status.value === 200 ? true : false;
+    selectStores.value = data.value.map((item) => {
+        return {
+            label: item.store_name,
+            value: item.store_id
+        }
+    });
 }
 
-async function fetchProducts() {
-    loadingProducts.value = true;
-    const { data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/products', {
+async function fetchProducts(){
+    const { status, data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/products', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
     });
-    loadingProducts.value = false;
-    
-    if (data.value) {
-        products.value = data.value;
-        selectProducts.value = data.value.map((item) => {
-            return {
-                label: `${item.product_name} - ${item.list_price}$`,
-                value: item.product_id
-            }
-        });
-    } else {
-        toast.add({
-            title: 'Error',
-            description: "Failed to load products",
-            color: 'error',
-            icon: 'bx:x'
-        });
-    }
+    products.value = data.value;
+    loading.value = status.value === 200 ? true : false;
+    selectProducts.value = data.value.map((item) => {
+        return {
+            label: item.product_name,
+            value: item.product_id
+        }
+    });
 }
 
-async function fetchStoreStocks() {
-    if (!selectedStore.value || !selectedStore.value.value) return;
-    
-    loadingStocks.value = true;
-    const { data } = await useLazyFetch(`https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks?action=getFromStore&store_id=${selectedStore.value.value}`, {
+// Fonction qui permet de récupérer les produits d'un magasin spécifique via l'API
+async function fetchProductFromStore(){
+    const { status, data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks/store/' + selectedStores.value.value, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
     });
-    loadingStocks.value = false;
-    
-    if (data.value) {
-        stocks.value = data.value;
-        selectStocks.value = data.value.map((item) => {
-            // Add null check before accessing product properties
-            if (!item.product) {
-                console.error('Missing product data for stock:', item);
-                // Store product_id if available in the item itself
-                return {
-                    label: `Product ID: ${item.product_id || 'Unknown'} - Quantity: ${item.quantity || 0}`,
-                    value: item.stock_id,
-                    product_id: item.product_id || null
-                }
-            }
-            return {
-                label: `${item.product.product_name} - Quantity: ${item.quantity}`,
-                value: item.stock_id,
-                product_id: item.product.product_id
-            }
-        });
-        
-        // Reset selected stock
-        selectedStock.value = null;
-        fetchedSelectedData.value = {};
-    } else {
-        toast.add({
-            title: 'Error',
-            description: "Failed to load stocks for this store",
-            color: 'error',
-            icon: 'bx:x'
-        });
-    }
-}
-async function fetchSelectedData() {
-    if (!selectedStock.value || !selectedStock.value.value) return;
-    
-    loading.value = true;
-    const { data } = await useLazyFetch(`https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks?action=get&id=${selectedStock.value.value}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
+    console.log(data.value);
+    console.log(products.value);
+
+    fetchedProductFromStore.value = data.value;
+    loading.value = status.value === 200 ? true : false;
+    selectFetchedProductFromStore.value = data.value.map((item) => {
+        return {
+            label: item.product.product_name + " - #" + item.stock_id,
+            value: item.stock_id
         }
     });
-    loading.value = false;
-    
-    if (data.value) {
-        // Store the response
-        fetchedSelectedData.value = data.value;
-        
-        // If product data is missing, find it from the stocks list
-        if (!fetchedSelectedData.value.product) {
-            console.log("Product data missing from API response, attempting to find it");
-            
-            // Find the matching stock in our already loaded stocks
-            const matchingStock = stocks.value.find(stock => 
-                stock.stock_id === fetchedSelectedData.value.stock_id);
-            
-            if (matchingStock && matchingStock.product) {
-                // Copy the product data from our list
-                fetchedSelectedData.value.product = matchingStock.product;
-                console.log("Found product data from stocks list:", matchingStock.product);
-            } else {
-                // If we still don't have product data, fetch product_id through another method
-                console.log("Attempting to find product_id through alternative method");
-                // Get product_id from the stocks list item where the label matches our selection
-                const selectedStockItem = selectStocks.value.find(item => 
-                    item.value === selectedStock.value.value);
-                
-                if (selectedStockItem) {
-                    // Extract product ID using regex from label: "Product Name - Quantity: X"
-                    // This is a fallback and might not be reliable
-                    console.log("Selected stock label:", selectedStockItem.label);
-                }
-            }
-        }
-    } else {
-        toast.add({
-            title: 'Error',
-            description: "Failed to load stock details",
-            color: 'error',
-            icon: 'bx:x'
-        });
-    }
 }
 
-async function addStock() {
-    // Validation
-    if (!modelData.value.store_id || !modelData.value.product_id || modelData.value.quantity < 0) {
-        toast.add({
-            title: 'Error',
-            description: "All fields are required and quantity must be positive",
-            color: 'error',
-            icon: 'bx:x'
-        });
-        return;
-    }
+// Fonction pour obtenir un stock par son ID
+function getStockById() {
+    let stocksList = fetchedProductFromStore.value;
+    let stockId = selectedFetchedProductFromStore.value.value;
+    if (!stocksList || !stockId) return null;
+    // Utiliser find pour récupérer le premier objet avec le stock_id correspondant
+    selectedStock.value = stocksList.find(stock => stock.stock_id === stockId) || null;
+}
 
-    loading.value = true;
-    const { data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks', {
+
+// Fonction qui permet d'ajouter un sotck à la base de données via l'API
+async function addStock(){
+    const {status, data} = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -271,87 +164,34 @@ async function addStock() {
             'Api': 'e8f1997c763'
         },
         body: {
-            store_id: parseInt(modelData.value.store_id.value),
-            product_id: parseInt(modelData.value.product_id.value),
-            quantity: parseInt(modelData.value.quantity)
+            product_id: selectedProduct.value.value,
+            store_id: selectedStores.value.value,
+            quantity: quantity.value
         }
     });
-    loading.value = false;
-    
-    if (data.value && !data.value.error) {
-        toast.add({
-            title: 'Success',
-            description: "Stock added successfully",
-            color: 'success',
-            icon: 'bx:check'
-        });
-        
-        // Reset form
-        modelData.value = {
-            store_id: null,
-            product_id: null,
-            quantity: 0
-        };
-        
-        // If the store is the currently selected one, refresh its stocks
-        if (selectedStore.value && modelData.value.store_id && 
-            selectedStore.value.value === modelData.value.store_id.value) {
-            fetchStoreStocks();
-        }
-    } else {
+    //Si il y a une erreur dans la réponse de l'API, on affiche un message d'erreur
+    if(data.value.error != null || status.value != "success"){
         toast.add({
             title: 'Error',
-            description: data.value?.error || "Failed to add stock",
-            color: 'error',
-            icon: 'bx:x'
-        });
-    }
-}
-
-async function editStock() {
-    if (!selectedStock.value || !selectedStock.value.value) return;
-    
-    // Validation
-    if (fetchedSelectedData.value.quantity < 0) {
-        toast.add({
-            title: 'Error',
-            description: "Quantity must be positive",
+            description: "an error occurred while adding the stock",
             color: 'error',
             icon: 'bx:x'
         });
         return;
+    }else{ //Sinon on affiche un message de succès
+        console.log(data.value);
+        toast.add({
+            title: 'Success',
+            description: 'Stock added successfully',
+            color: 'success',
+            icon: 'bx:check'
+        });
     }
+}
 
-    // Get product_id from different sources
-    let product_id;
-    
-    // First try: from fetchedSelectedData
-    if (fetchedSelectedData.value.product?.product_id) {
-        product_id = fetchedSelectedData.value.product.product_id;
-    } 
-    // Second try: directly from response if available
-    else if (fetchedSelectedData.value.product_id) {
-        product_id = fetchedSelectedData.value.product_id;
-    }
-    // Third try: from the stocks array
-    else {
-        const matchingStock = stocks.value.find(stock => 
-            stock.stock_id === fetchedSelectedData.value.stock_id);
-        if (matchingStock && (matchingStock.product_id || matchingStock.product?.product_id)) {
-            product_id = matchingStock.product_id || matchingStock.product.product_id;
-        } else {
-            toast.add({
-                title: 'Error',
-                description: "Cannot determine product ID. Please reload and try again.",
-                color: 'error',
-                icon: 'bx:x'
-            });
-            return;
-        }
-    }
-
-    loading.value = true;
-    const { data } = await useLazyFetch(`https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks`, {
+// Fonction qui permet de modifier un stock à la base de données via l'API
+async function editStock(){
+    const {status, data} = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -359,39 +199,33 @@ async function editStock() {
             'Api': 'e8f1997c763'
         },
         body: {
-            id: selectedStock.value.value,
-            store_id: fetchedSelectedData.value.store.store_id,
-            product_id: product_id,
-            quantity: parseInt(fetchedSelectedData.value.quantity)
+            id: selectedFetchedProductFromStore.value.value,
+            quantity: selectedStock.value.quantity
         }
     });
-    loading.value = false;
-    
-    if (data.value && !data.value.error) {
-        toast.add({
-            title: 'Success',
-            description: "Stock updated successfully",
-            color: 'success',
-            icon: 'bx:check'
-        });
-        
-        // Refresh the store's stocks
-        fetchStoreStocks();
-    } else {
+    //Si il y a une erreur dans la réponse de l'API, on affiche un message d'erreur
+    if(data.value.error != null || status.value != "success"){
         toast.add({
             title: 'Error',
-            description: data.value?.error || "Failed to update stock",
+            description: "an error occurred while editing the stock",
             color: 'error',
             icon: 'bx:x'
+        });
+        return;
+    }else{ //Sinon on affiche un message de succès
+        console.log(data.value);
+        toast.add({
+            title: 'Success',
+            description: 'Stock edited successfully',
+            color: 'success',
+            icon: 'bx:check'
         });
     }
 }
 
-async function deleteStock() {
-    if (!selectedStock.value || !selectedStock.value.value) return;
-    
-    loading.value = true;
-    const { data } = await useLazyFetch(`https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks/${selectedStock.value.value}`, {
+// Fonction qui permet de supprimer un stock à la base de données via l'API
+async function deleteStock(){
+    const {status, data} = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stocks/' + selectedFetchedProductFromStore.value.value, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -399,27 +233,24 @@ async function deleteStock() {
             'Api': 'e8f1997c763'
         }
     });
-    loading.value = false;
-    
-    if (data.value && !data.value.error) {
-        toast.add({
-            title: 'Success',
-            description: "Stock deleted successfully",
-            color: 'success',
-            icon: 'bx:check'
-        });
-        
-        // Reset selection and refresh stocks
-        selectedStock.value = null;
-        fetchedSelectedData.value = {};
-        fetchStoreStocks();
-    } else {
+    //Si il y a une erreur dans la réponse de l'API, on affiche un message d'erreur
+    if(data.value.error != null || status.value != "success"){
         toast.add({
             title: 'Error',
-            description: data.value?.error || "Failed to delete stock",
+            description: "an error occurred while deleting the stock",
             color: 'error',
             icon: 'bx:x'
         });
+        return;
+    }else{ //Sinon on affiche un message de succès
+        console.log(data.value);
+        toast.add({
+            title: 'Success',
+            description: 'Stock deleted successfully',
+            color: 'success',
+            icon: 'bx:check'
+        });
     }
 }
+
 </script>
