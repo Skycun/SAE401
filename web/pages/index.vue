@@ -72,7 +72,6 @@
                 </LMarker>
             </LMap>
         </div>
-        {{ userPosition }}
     </template>
 
 
