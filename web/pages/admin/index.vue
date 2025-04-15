@@ -14,7 +14,6 @@
             <NuxtLink to="/admin/database/stores"><Button class="p-2">Stores</Button></NuxtLink>
             <NuxtLink to="/admin/database/employees"><Button class="p-2">Employees</Button></NuxtLink>
         </div>
-        <h2 class="text-indigo-950 text-xl flex justify-center my-5">Sales</h2>
     </div>
 </template>
 

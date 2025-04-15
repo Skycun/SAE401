@@ -54,10 +54,6 @@ if(!user_data.value){
                 to: '/'
             },
             {
-                label: 'Profile',
-                icon: 'i-lucide-user'
-            },
-            {
                 label: 'Dashboard',
                 icon: 'i-lucide-grid',
                 to: '/admin'

@@ -35,7 +35,6 @@
     </UCollapsible>
 
     <p v-if="filteredProducts.length === 0" class="text-center mt-5 text-sky-950 mb-16">No product found</p>
-
     <!-- Des Produits mis en avant -->
     <div v-else class="mb-5">
         <div class="grid grid-cols-2 px-5 gap-5">
@@ -53,6 +52,7 @@ const route = useRoute();
 const query = ref('');
 console.log(route.query);
 
+
 if(route.query.q) {
     query.value = route.query.q;
 }
@@ -64,6 +64,16 @@ const maxYear = ref(2025);
 const brandFiltrer = ref('all');
 const categoryFiltrer = ref('all');
 
+
+// Si une brand à déjà été selectionnée, on l'active dans le filtre
+if(route.query.brand) {
+    brandFiltrer.value = route.query.brand;
+}
+// Si une category à déjà été selectionnée, on l'active dans le filtre
+if(route.query.category) {
+    categoryFiltrer.value = route.query.category;
+}
+
 const { data: brands } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/brands');
 const { data: categories } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/categories');
 
@@ -73,7 +83,7 @@ const BrandSelect = computed(() => {
 
     let array = brands.value.map(brand => ({
         label: brand.brand_name,
-        value: brand.brand_id
+        value: String(brand.brand_id)
     }));
 
     array.unshift({
@@ -90,7 +100,7 @@ const CategorySelect = computed(() => {
 
     let array = categories.value.map(category => ({
         label: category.category_name,
-        value: category.category_id
+        value: String(category.category_id)
     }));
 
     array.unshift({
@@ -118,13 +128,13 @@ const filteredProducts = computed(() => {
             brandFiltrer.value = '';
         }
 
-        const matchesBrand = brandFiltrer.value === '' || product.brand.brand_id === brandFiltrer.value;
+        const matchesBrand = brandFiltrer.value === '' || product.brand.brand_id == brandFiltrer.value;
         // Filtre par catégorie
         if (categoryFiltrer.value === 'all') {
             categoryFiltrer.value = '';
         }
 
-        const matchesCategory = categoryFiltrer.value === '' || product.category.category_id === categoryFiltrer.value;
+        const matchesCategory = categoryFiltrer.value === '' || product.category.category_id == categoryFiltrer.value;
 
         // Filtre par recherche (nom du produit)
         const matchesQuery = query.value.trim() === '' || 

@@ -2,6 +2,7 @@
         <SearchBar />
         <!-- Les 3 boutons d'accueil -->
         <section class="mt-10 mb-10">
+            <NuxtLink :to="{ path: '/search', query: { brand: '1' } }">
             <div class="bg-indigo-600 min-h-52 mx-5 rounded-[20px] bg-cover bg-center bg-no-repeat p-5 flex justify-between flex-col" 
                 style="background-image: url('/images/moutain-rider.jpg');">
                 <h2 class="text-indigo-600 text-2xl w-[50%]">Discover the Electra bikes</h2>
@@ -9,15 +10,20 @@
                     Discover
                 </button>
             </div>
+            </NuxtLink>
             <div class="grid grid-cols-2 mt-5 gap-5">
+                <NuxtLink to="/stores">
                 <div class="bg-indigo-600 ml-5 rounded-[20px] aspect-square bg-cover bg-center bg-no-repeat p-5"
                 style="background-image: url('/images/look-sky.png');">
                     <h2 class="text-indigo-600 text-2xl">Our Stores</h2>
                 </div>
+                </NuxtLink>
+                <NuxtLink :to="{ path: '/search', query: { category: '7' } }">
                 <div class="bg-indigo-600 mr-5 rounded-[20px] aspect-square bg-cover bg-center bg-no-repeat p-5"
                 style="background-image: url('/images/grass-bike.jpg');">
                     <h2 class="text-indigo-600 text-2xl">Road Bikes</h2>
                 </div>
+                </NuxtLink>
             </div>
         </section>
         <!-- Des Produits mis en avant -->
