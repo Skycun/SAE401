@@ -11,7 +11,7 @@
                 <div>
                     <input type="checkbox" id="remember" v-model="remember" class="w-4 h-4 text-indigo-600"/> <label for="remember" class="text-indigo-950">Remember me</label>
                 </div>
-                <button class="bg-indigo-600 text-white rounded-full h-14" @click="login">Login</button>
+                <Button class="bg-indigo-600 text-white rounded-full p-3" @click="login">Login</Button>
             </div>
         </div>
     </section>
