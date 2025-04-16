@@ -1,41 +1,41 @@
     <template>
-        <SearchBar />
+        <SearchBar class="lg:mx-40"/>
         <!-- Les 3 boutons d'accueil -->
-        <section class="mt-10 mb-10">
+        <section class="my-10 mx-5 xl:mx-40 lg:mx-20 lg:h-96 lg:grid lg:grid-cols-[66%_33%] lg:gap-5">
             <NuxtLink :to="{ path: '/search', query: { brand: '1' } }">
-            <div class="bg-indigo-600 min-h-52 mx-5 rounded-[20px] bg-cover bg-center bg-no-repeat p-5 flex justify-between flex-col" 
+            <div class="bg-indigo-600 min-h-52 lg:h-96 rounded-[20px] bg-cover bg-center bg-no-repeat p-5 flex justify-between flex-col" 
                 style="background-image: url('/images/moutain-rider.jpg');">
-                <h2 class="text-indigo-600 text-2xl w-[50%]">Discover the Electra bikes</h2>
+                <h2 class="text-indigo-600 max-lg:text-2xl min-lg:text-5xl w-[50%]">Discover the Electra bikes</h2>
                 <button class="bg-indigo-600 text-indigo-50 py-2 rounded-[20px] w-[50%]">
                     Discover
                 </button>
             </div>
             </NuxtLink>
-            <div class="grid grid-cols-2 mt-5 gap-5">
+            <div class="grid max-lg:grid-cols-2 max-lg:mt-5 gap-5 lg:grid-rows-2 overflow-hidden">
                 <NuxtLink to="/stores">
-                <div class="bg-indigo-600 ml-5 rounded-[20px] aspect-square bg-cover bg-center bg-no-repeat p-5"
+                <div class="bg-indigo-600 rounded-[20px] max-lg:aspect-square bg-cover bg-center bg-no-repeat p-5 h-full"
                 style="background-image: url('/images/look-sky.png');">
-                    <h2 class="text-indigo-600 text-2xl">Our Stores</h2>
+                    <h2 class="text-indigo-600 text-2xl min-lg:text-3xl w-[50%]">Our Stores</h2>
                 </div>
                 </NuxtLink>
                 <NuxtLink :to="{ path: '/search', query: { category: '7' } }">
-                <div class="bg-indigo-600 mr-5 rounded-[20px] aspect-square bg-cover bg-center bg-no-repeat p-5"
+                <div class="bg-indigo-600 rounded-[20px] max-lg:aspect-square bg-cover bg-center bg-no-repeat p-5 h-full"
                 style="background-image: url('/images/grass-bike.jpg');">
-                    <h2 class="text-indigo-600 text-2xl">Road Bikes</h2>
+                    <h2 class="text-indigo-600 text-2xl min-lg:text-3xl w-[50%]">Road Bikes</h2>
                 </div>
                 </NuxtLink>
             </div>
         </section>
         <!-- Des Produits mis en avant -->
-        <section class="grid grid-cols-2 px-5 gap-5">
+        <section class="grid grid-cols-2 min-lg:grid-cols-4 gap-5 min-lg:mx-40 max-lg:mx-5">
             <!-- Mobile Card -->
             <div v-if="data && data.data" v-for="product in data.data">
                 <MobileCard :product="product"/>
             </div>
             
         </section>
-        <h2 class="text-2xl m-10 flex justify-center text-indigo-950">Our Stores</h2>
-        <div class="mx-5 rounded-[20px] aspect-square mb-10">
+        <h2 class="text-2xl lg:text-4xl m-10 flex justify-center text-indigo-950">Our Stores</h2>
+        <div class="mx-5 lg:mx-20 xl:mx-40 max-lg:aspect-square lg:h-[50vh] mb-10">
             <LMap
             ref="map"
             :zoom="zoom"

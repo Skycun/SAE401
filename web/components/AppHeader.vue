@@ -1,20 +1,17 @@
 <template>
-    <header class="relative h-16 flex items-center justify-between px-8 mt-6">
+    <header class="relative h-16 flex items-center justify-between px-8 mt-6 lg:mx-20 xl:mx-40">
         <!-- Élément vide pour équilibrer la mise en page (même largeur que le menu) -->
-        <div class="w-10"></div>
+        <div class="w-10 lg:w-0"></div>
         
-        <!-- Logo centré -->
-        <NuxtLink to="/" class="absolute left-1/2 transform -translate-x-1/2">
-            <img src="../public/images/Bikestoreslogo.png" alt="Bike Stores" class="h-6">
+        <NuxtLink to="/" class="absolute max-lg:left-1/2 max-lg:transform max-lg:-translate-x-1/2">
+            <img src="../public/images/Bikestoreslogo.png" alt="Bike Stores" class="h-6 lg:h-9">
         </NuxtLink>
         
-        <!-- Menu à droite -->
         <UDropdownMenu
             :items="menu"
             :ui="{
                 content: 'w-48'
-            }"
-        >
+            }">
             <UButton icon="i-lucide-menu" color="primary" variant="ghost" />
         </UDropdownMenu>
     </header>

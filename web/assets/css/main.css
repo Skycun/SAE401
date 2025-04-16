@@ -5,7 +5,7 @@ body{
     background-color: #F3F3F3;
 }
 
-h1, h2, h3, button, p, label{
+h1, h2, h3, button, p{
     font-family: NeuePower;
 }
 
@@ -20,4 +20,5 @@ label{
 
 :root {
     --ui-primary: #4f46e5;
+    --ui-bg-elevated: #4f46e5;
   }
