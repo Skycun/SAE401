@@ -14,6 +14,15 @@
                 <NuxtLink to="/admin/database/stores"><Button class="p-2">Stores</Button></NuxtLink>
                 <NuxtLink to="/admin/database/employees"><Button class="p-2">Employees</Button></NuxtLink>
             </div>
+            <div class="m-5 flex flex-col gap-5">
+                <h2 class="text-indigo-950 text-xl flex justify-center my-5">Employees</h2>
+                <div v-if="user_data.employees_role == 'chief'">
+                    <NuxtLink to="/admin/employees"><Button class="p-2">Check my employees</Button></NuxtLink>
+                </div>
+                <div v-if="user_data.employees_role == 'it'">
+                    <NuxtLink to="/admin/employees"><Button class="p-2">Check all the employees</Button></NuxtLink>
+                </div>
+            </div>
         </div>
     </section>
 </template>
