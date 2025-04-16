@@ -1,69 +1,73 @@
 <template>
-    <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Products</h2>
-    <div class="m-5 bg-white rounded-[20px] p-5 ">
-        <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
-        <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
-            {
-                label: 'Add',
-                value: 'add'
-            },
-            {
-                label: 'Edit',
-                value: 'edit'
-            },
-            {
-                label: 'Delete',
-                value: 'delete'
-            }
-        ]"/>
-    </div>
-    <div v-if="action">
-        <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select a product</h2>
-            <USelectMenu label="Select a product" v-model="selectedProduct" :loading="loading" placeholder="Select a product" class="w-full mb-2" @change="fetchSelectedData" :items="selectProducts"/>
-            <div v-if="action.value == 'delete' && selectedProduct && selectedProduct.value != null">
-                <Button class="p-3 mt-5 bg-red-600" @click="deleteProduct">Delete</Button>
+    <section class="m-5 flex flex-col justify-center items-center">
+        <div class="w-full lg:w-1/2 xl:w-1/3">
+            <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Products</h2>
+            <div class="m-5 bg-white rounded-[20px] p-5 ">
+                <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
+                <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
+                    {
+                        label: 'Add',
+                        value: 'add'
+                    },
+                    {
+                        label: 'Edit',
+                        value: 'edit'
+                    },
+                    {
+                        label: 'Delete',
+                        value: 'delete'
+                    }
+                ]"/>
+            </div>
+            <div v-if="action">
+                <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select a product</h2>
+                    <USelectMenu label="Select a product" v-model="selectedProduct" :loading="loading" placeholder="Select a product" class="w-full mb-2" @change="fetchSelectedData" :items="selectProducts"/>
+                    <div v-if="action.value == 'delete' && selectedProduct && selectedProduct.value != null">
+                        <Button class="p-3 mt-5 bg-red-600" @click="deleteProduct">Delete</Button>
+                    </div>
+                </div>
+                <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add a product</h2>
+                    <UFormField label="Product Name" required>
+                        <UInput label="Product name" placeholder="Enter the product name" v-model="modelData.product_name" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Brand" required>
+                        <USelectMenu label="Select a brand" v-model="modelData.brand_id" :loading="loadingBrands" placeholder="Select a brand" class="w-full mb-2" :items="selectBrands"/>
+                    </UFormField>
+                    <UFormField label="Category" required>
+                        <USelectMenu label="Select a category" v-model="modelData.category_id" :loading="loadingCategories" placeholder="Select a category" class="w-full mb-2" :items="selectCategories"/>
+                    </UFormField>
+                    <UFormField label="Model Year" required>
+                        <UInput type="number" label="Model year" placeholder="Enter the model year" v-model.number="modelData.model_year" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="List Price" required>
+                        <UInput type="number" step="0.01" label="List price" placeholder="Enter the product price" v-model.number="modelData.list_price" class="w-full mb-2"/>
+                    </UFormField>
+                    <Button class="p-3 mt-5" @click="addProduct">Add</Button>
+                </div>
+                <div v-if="action.value == 'edit' && selectedProduct && selectedProduct.value != null" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Edit a product</h2>
+                    <UFormField label="Product Name" required>
+                        <UInput label="Product name" placeholder="Enter the product name" v-model="fetchedSelectedData.product_name" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Brand" required>
+                        <USelectMenu label="Select a brand" v-model="fetchedSelectedData.brand_id" :loading="loadingBrands" placeholder="Select a brand" class="w-full mb-2" :items="selectBrands"/>
+                    </UFormField>
+                    <UFormField label="Category" required>
+                        <USelectMenu label="Select a category" v-model="fetchedSelectedData.category_id" :loading="loadingCategories" placeholder="Select a category" class="w-full mb-2" :items="selectCategories"/>
+                    </UFormField>
+                    <UFormField label="Model Year" required>
+                        <UInput type="number" label="Model year" placeholder="Enter the model year" v-model.number="fetchedSelectedData.model_year" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="List Price" required>
+                        <UInput type="number" step="0.01" label="List price" placeholder="Enter the product price" v-model.number="fetchedSelectedData.list_price" class="w-full mb-2"/>
+                    </UFormField>
+                    <Button class="p-3 mt-5" @click="editProduct">Edit</Button>
+                </div>
             </div>
         </div>
-        <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add a product</h2>
-            <UFormField label="Product Name" required>
-                <UInput label="Product name" placeholder="Enter the product name" v-model="modelData.product_name" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Brand" required>
-                <USelectMenu label="Select a brand" v-model="modelData.brand_id" :loading="loadingBrands" placeholder="Select a brand" class="w-full mb-2" :items="selectBrands"/>
-            </UFormField>
-            <UFormField label="Category" required>
-                <USelectMenu label="Select a category" v-model="modelData.category_id" :loading="loadingCategories" placeholder="Select a category" class="w-full mb-2" :items="selectCategories"/>
-            </UFormField>
-            <UFormField label="Model Year" required>
-                <UInput type="number" label="Model year" placeholder="Enter the model year" v-model.number="modelData.model_year" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="List Price" required>
-                <UInput type="number" step="0.01" label="List price" placeholder="Enter the product price" v-model.number="modelData.list_price" class="w-full mb-2"/>
-            </UFormField>
-            <Button class="p-3 mt-5" @click="addProduct">Add</Button>
-        </div>
-        <div v-if="action.value == 'edit' && selectedProduct && selectedProduct.value != null" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Edit a product</h2>
-            <UFormField label="Product Name" required>
-                <UInput label="Product name" placeholder="Enter the product name" v-model="fetchedSelectedData.product_name" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Brand" required>
-                <USelectMenu label="Select a brand" v-model="fetchedSelectedData.brand_id" :loading="loadingBrands" placeholder="Select a brand" class="w-full mb-2" :items="selectBrands"/>
-            </UFormField>
-            <UFormField label="Category" required>
-                <USelectMenu label="Select a category" v-model="fetchedSelectedData.category_id" :loading="loadingCategories" placeholder="Select a category" class="w-full mb-2" :items="selectCategories"/>
-            </UFormField>
-            <UFormField label="Model Year" required>
-                <UInput type="number" label="Model year" placeholder="Enter the model year" v-model.number="fetchedSelectedData.model_year" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="List Price" required>
-                <UInput type="number" step="0.01" label="List price" placeholder="Enter the product price" v-model.number="fetchedSelectedData.list_price" class="w-full mb-2"/>
-            </UFormField>
-            <Button class="p-3 mt-5" @click="editProduct">Edit</Button>
-        </div>
-    </div>
+    </section>
 </template>
 
 <script setup>

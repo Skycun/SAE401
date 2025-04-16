@@ -1,46 +1,49 @@
 <template>
-    <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Brands</h2>
-    <div class="m-5 bg-white rounded-[20px] p-5 ">
-        <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
-        <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
-            {
-                label: 'Add',
-                value: 'add'
-            },
-            {
-                label: 'Edit',
-                value: 'edit'
-            },
-            {
-                label: 'Delete',
-                value: 'delete'
-            }
-        ]"/>
-    </div>
-    <div v-if="action">
-        <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select your brand</h2>
-            <USelectMenu label="Select your brand" v-model="selectedBrand" :loading="loading" placeholder="Select a data" class="w-full mb-2" @change="fetchSelectedData" :items="selectBrands"/>
-            <div v-if="action.value == 'delete' && selectedBrand.value != null">
-                <Button class="p-3 mt-5 bg-red-600" @click="deleteBrand">Delete</Button>
+    <section class="m-5 flex flex-col justify-center items-center">
+        <div class="w-full lg:w-1/2 xl:w-1/3">
+            <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Brands</h2>
+            <div class="bg-white rounded-[20px] p-5 mt-5">
+                <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
+                <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
+                    {
+                        label: 'Add',
+                        value: 'add'
+                    },
+                    {
+                        label: 'Edit',
+                        value: 'edit'
+                    },
+                    {
+                        label: 'Delete',
+                        value: 'delete'
+                    }
+                ]"/>
+            </div>
+            <div v-if="action">
+                <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select your brand</h2>
+                    <USelectMenu label="Select your brand" v-model="selectedBrand" :loading="loading" placeholder="Select a data" class="w-full mb-2" @change="fetchSelectedData" :items="selectBrands"/>
+                    <div v-if="action.value == 'delete' && selectedBrand.value != null">
+                        <Button class="p-3 mt-5 bg-red-600" @click="deleteBrand">Delete</Button>
+                    </div>
+                </div>
+                <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add a brand</h2>
+                    <UFormField label="Brand Name" required>
+                        <UInput label="Brand name" placeholder="Enter the brand name" v-model="modelData.brand_name" class="w-full mb-2"/>
+                    </UFormField>
+                    <Button class="p-3 mt-5" @click="addBrand">Add</Button>
+                </div>
+                <div v-if="action.value == 'edit' && selectedBrand.value != null" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Edit a brand</h2>
+                    <UFormField label="Brand Name" required>
+                        <UInput label="Brand name" placeholder="Enter the brand name" v-model="fetchedSelectedData.brand_name" class="w-full mb-2"/>
+                    </UFormField>
+                    <Button class="p-3 mt-5" @click="editBrand">Edit</Button>
+                </div>
             </div>
         </div>
-        <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add a brand</h2>
-            <UFormField label="Brand Name" required>
-                <UInput label="Brand name" placeholder="Enter the brand name" v-model="modelData.brand_name" class="w-full mb-2"/>
-            </UFormField>
-            <Button class="p-3 mt-5" @click="addBrand">Add</Button>
-        </div>
-        <div v-if="action.value == 'edit' && selectedBrand.value != null" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Edit a brand</h2>
-            <UFormField label="Brand Name" required>
-                <UInput label="Brand name" placeholder="Enter the brand name" v-model="fetchedSelectedData.brand_name" class="w-full mb-2"/>
-            </UFormField>
-            <Button class="p-3 mt-5" @click="editBrand">Edit</Button>
-        </div>
-    </div>
-    {{ selectedBrand }}
+    </section>
 </template>
 
 <script setup>

@@ -1,59 +1,63 @@
 <template>
-    <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Stocks</h2>
-    <div class="m-5 bg-white rounded-[20px] p-5 ">
-        <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
-        <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
-            {
-                label: 'Add',
-                value: 'add'
-            },
-            {
-                label: 'Edit',
-                value: 'edit'
-            },
-            {
-                label: 'Delete',
-                value: 'delete'
-            }
-        ]"/>
-    </div>
-    <div v-if="action">
-        <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select your stock</h2>
-            <UFormField label="Stores" required>
-                <USelectMenu label="Select a store" v-model="selectedStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores" @change="fetchProductFromStore"/>
-            </UFormField>
-            <div v-if="selectedStores.value">
-                <UFormField label="Products" required>
-                    <USelectMenu label="Select a product" v-model="selectedFetchedProductFromStore" placeholder="Select a product" class="w-full mb-2" @change="getStockById" :items="selectFetchedProductFromStore"/>
-                </UFormField>
+    <section class="m-5 flex flex-col justify-center items-center">
+        <div class="w-full lg:w-1/2 xl:w-1/3">
+            <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Stocks</h2>
+            <div class="m-5 bg-white rounded-[20px] p-5 ">
+                <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
+                <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
+                    {
+                        label: 'Add',
+                        value: 'add'
+                    },
+                    {
+                        label: 'Edit',
+                        value: 'edit'
+                    },
+                    {
+                        label: 'Delete',
+                        value: 'delete'
+                    }
+                ]"/>
             </div>
-            <!-- Si l'action est delete -->
-            <div v-if="action.value == 'delete' && selectedStores.value && selectedFetchedProductFromStore.value">
-                <Button class="p-3 mt-5 bg-red-600" @click="deleteStock">Delete</Button>
-            </div>
-            <!-- Si l'action est edit -->
-            <div v-else-if="action.value == 'edit' && selectedStores.value && selectedFetchedProductFromStore.value">
-                <UFormField label="Quantity" required>
-                    <UInput label="Quantity" placeholder="Enter the quantity" v-model="selectedStock.quantity" class="w-full mb-2"/>
-                </UFormField>
-                <Button class="p-3 mt-5" @click="editStock">Edit</Button>
+            <div v-if="action">
+                <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select your stock</h2>
+                    <UFormField label="Stores" required>
+                        <USelectMenu label="Select a store" v-model="selectedStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores" @change="fetchProductFromStore"/>
+                    </UFormField>
+                    <div v-if="selectedStores.value">
+                        <UFormField label="Products" required>
+                            <USelectMenu label="Select a product" v-model="selectedFetchedProductFromStore" placeholder="Select a product" class="w-full mb-2" @change="getStockById" :items="selectFetchedProductFromStore"/>
+                        </UFormField>
+                    </div>
+                    <!-- Si l'action est delete -->
+                    <div v-if="action.value == 'delete' && selectedStores.value && selectedFetchedProductFromStore.value">
+                        <Button class="p-3 mt-5 bg-red-600" @click="deleteStock">Delete</Button>
+                    </div>
+                    <!-- Si l'action est edit -->
+                    <div v-else-if="action.value == 'edit' && selectedStores.value && selectedFetchedProductFromStore.value">
+                        <UFormField label="Quantity" required>
+                            <UInput label="Quantity" placeholder="Enter the quantity" v-model="selectedStock.quantity" class="w-full mb-2"/>
+                        </UFormField>
+                        <Button class="p-3 mt-5" @click="editStock">Edit</Button>
+                    </div>
+                </div>
+                <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add a stock</h2>
+                    <UFormField label="Product" required>
+                        <USelectMenu label="Select a product" v-model="selectedProduct" placeholder="Select a product" class="w-full mb-2" :items="selectProducts"/>
+                    </UFormField>
+                    <UFormField label="Stores" required>
+                        <USelectMenu label="Select a store" v-model="selectedStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores"/>
+                    </UFormField>
+                    <UFormField label="Quantity" required>
+                        <UInput label="Quantity" placeholder="Enter the quantity" v-model="quantity" class="w-full mb-2"/>
+                    </UFormField>
+                    <Button class="p-3 mt-5" @click="addStock">Add</Button>
+                </div>
             </div>
         </div>
-        <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add a stock</h2>
-            <UFormField label="Product" required>
-                <USelectMenu label="Select a product" v-model="selectedProduct" placeholder="Select a product" class="w-full mb-2" :items="selectProducts"/>
-            </UFormField>
-            <UFormField label="Stores" required>
-                <USelectMenu label="Select a store" v-model="selectedStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores"/>
-            </UFormField>
-            <UFormField label="Quantity" required>
-                <UInput label="Quantity" placeholder="Enter the quantity" v-model="quantity" class="w-full mb-2"/>
-            </UFormField>
-            <Button class="p-3 mt-5" @click="addStock">Add</Button>
-        </div>
-    </div>
+    </section>
 </template>
 
 <script setup>

@@ -1,77 +1,81 @@
 <template>
-    <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Employees</h2>
-    <div class="m-5 bg-white rounded-[20px] p-5 ">
-        <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
-        <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
-            {
-                label: 'Add',
-                value: 'add'
-            },
-            {
-                label: 'Edit',
-                value: 'edit'
-            },
-            {
-                label: 'Delete',
-                value: 'delete'
-            }
-        ]"/>
-    </div>
-    <div v-if="action">
-        <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select an employee</h2>
-            <USelectMenu label="Select an employee" v-model="selectedEmployee" :loading="loading" placeholder="Select an employee" class="w-full mb-2" @change="fetchSelectedData" :items="selectEmployees"/>
-            <div v-if="action.value == 'delete' && selectedEmployee && selectedEmployee.value != null">
-                <Button class="p-3 mt-5 bg-red-600" @click="deleteEmployee">Delete</Button>
+    <section class="m-5 flex flex-col justify-center items-center">
+        <div class="w-full lg:w-1/2 xl:w-1/3">
+            <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Employees</h2>
+            <div class="m-5 bg-white rounded-[20px] p-5 ">
+                <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
+                <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
+                    {
+                        label: 'Add',
+                        value: 'add'
+                    },
+                    {
+                        label: 'Edit',
+                        value: 'edit'
+                    },
+                    {
+                        label: 'Delete',
+                        value: 'delete'
+                    }
+                ]"/>
+            </div>
+            <div v-if="action">
+                <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select an employee</h2>
+                    <USelectMenu label="Select an employee" v-model="selectedEmployee" :loading="loading" placeholder="Select an employee" class="w-full mb-2" @change="fetchSelectedData" :items="selectEmployees"/>
+                    <div v-if="action.value == 'delete' && selectedEmployee && selectedEmployee.value != null">
+                        <Button class="p-3 mt-5 bg-red-600" @click="deleteEmployee">Delete</Button>
+                    </div>
+                </div>
+                <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add an employee</h2>
+                    <UFormField label="Employee Name" required>
+                        <UInput label="Employee name" placeholder="Enter the employee name" v-model="modelData.employees_name" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Employee Email" required>
+                        <UInput label="Employee email" placeholder="Enter the employee email" v-model="modelData.employees_email" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Employee Password" required>
+                        <UInput label="Employee password" placeholder="Enter the employee password" type="password" v-model="modelData.employees_password" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Employee Role" required>
+                        <USelectMenu label="Select a role" v-model="modelData.employees_role" placeholder="Select a role" class="w-full mb-2" :items="[
+                            { label: 'Employee', value: 'employee' },
+                            { label: 'Chief', value: 'chief' },
+                            { label: 'IT', value: 'it' }
+                        ]"/>
+                    </UFormField>
+                    <UFormField label="Store" required>
+                        <USelectMenu label="Select a store" v-model="modelData.store_id" :loading="loadingStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores"/>
+                    </UFormField>
+                    <Button class="p-3 mt-5" @click="addEmployee">Add</Button>
+                </div>
+                <div v-if="action.value == 'edit' && selectedEmployee && selectedEmployee.value != null" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Edit an employee</h2>
+                    <UFormField label="Employee Name" required>
+                        <UInput label="Employee name" placeholder="Enter the employee name" v-model="fetchedSelectedData.employees_name" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Employee Email" required>
+                        <UInput label="Employee email" placeholder="Enter the employee email" v-model="fetchedSelectedData.employees_email" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Employee Password">
+                        <UInput label="Employee password" placeholder="Leave empty to keep current password" type="password" v-model="newPassword" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Employee Role" required>
+                        <USelectMenu label="Select a role" v-model="fetchedSelectedData.employees_role" placeholder="Select a role" class="w-full mb-2" :items="[
+                            { label: 'Employee', value: 'employee' },
+                            { label: 'Chief', value: 'chief' },
+                            { label: 'IT', value: 'it' }
+                        ]"/>
+                    </UFormField>
+                    <UFormField label="Store" required>
+                        <USelectMenu label="Select a store" v-model="fetchedSelectedData.store_id" :loading="loadingStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores"/>
+                    </UFormField>
+                    <Button class="p-3 mt-5" @click="editEmployee">Edit</Button>
+                </div>
             </div>
         </div>
-        <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add an employee</h2>
-            <UFormField label="Employee Name" required>
-                <UInput label="Employee name" placeholder="Enter the employee name" v-model="modelData.employees_name" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Employee Email" required>
-                <UInput label="Employee email" placeholder="Enter the employee email" v-model="modelData.employees_email" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Employee Password" required>
-                <UInput label="Employee password" placeholder="Enter the employee password" type="password" v-model="modelData.employees_password" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Employee Role" required>
-                <USelectMenu label="Select a role" v-model="modelData.employees_role" placeholder="Select a role" class="w-full mb-2" :items="[
-                    { label: 'Employee', value: 'employee' },
-                    { label: 'Chief', value: 'chief' },
-                    { label: 'IT', value: 'it' }
-                ]"/>
-            </UFormField>
-            <UFormField label="Store" required>
-                <USelectMenu label="Select a store" v-model="modelData.store_id" :loading="loadingStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores"/>
-            </UFormField>
-            <Button class="p-3 mt-5" @click="addEmployee">Add</Button>
-        </div>
-        <div v-if="action.value == 'edit' && selectedEmployee && selectedEmployee.value != null" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Edit an employee</h2>
-            <UFormField label="Employee Name" required>
-                <UInput label="Employee name" placeholder="Enter the employee name" v-model="fetchedSelectedData.employees_name" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Employee Email" required>
-                <UInput label="Employee email" placeholder="Enter the employee email" v-model="fetchedSelectedData.employees_email" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Employee Password">
-                <UInput label="Employee password" placeholder="Leave empty to keep current password" type="password" v-model="newPassword" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Employee Role" required>
-                <USelectMenu label="Select a role" v-model="fetchedSelectedData.employees_role" placeholder="Select a role" class="w-full mb-2" :items="[
-                    { label: 'Employee', value: 'employee' },
-                    { label: 'Chief', value: 'chief' },
-                    { label: 'IT', value: 'it' }
-                ]"/>
-            </UFormField>
-            <UFormField label="Store" required>
-                <USelectMenu label="Select a store" v-model="fetchedSelectedData.store_id" :loading="loadingStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores"/>
-            </UFormField>
-            <Button class="p-3 mt-5" @click="editEmployee">Edit</Button>
-        </div>
-    </div>
+    </section>
 </template>
 
 <script setup>

@@ -1,45 +1,49 @@
 <template>
-    <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Categories</h2>
-    <div class="m-5 bg-white rounded-[20px] p-5 ">
-        <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
-        <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
-            {
-                label: 'Add',
-                value: 'add'
-            },
-            {
-                label: 'Edit',
-                value: 'edit'
-            },
-            {
-                label: 'Delete',
-                value: 'delete'
-            }
-        ]"/>
-    </div>
-    <div v-if="action">
-        <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select your category</h2>
-            <USelectMenu label="Select your category" v-model="selectedCategory" :loading="loading" placeholder="Select a data" class="w-full mb-2" @change="fetchSelectedData" :items="selectCategories"/>
-            <div v-if="action.value == 'delete' && selectedCategory.value != null">
-                <Button class="p-3 mt-5 bg-red-600" @click="deleteCategory">Delete</Button>
+    <section class="m-5 flex flex-col justify-center items-center">
+        <div class="w-full lg:w-1/2 xl:w-1/3">
+            <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Categories</h2>
+            <div class="m-5 bg-white rounded-[20px] p-5 ">
+                <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
+                <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
+                    {
+                        label: 'Add',
+                        value: 'add'
+                    },
+                    {
+                        label: 'Edit',
+                        value: 'edit'
+                    },
+                    {
+                        label: 'Delete',
+                        value: 'delete'
+                    }
+                ]"/>
+            </div>
+            <div v-if="action">
+                <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select your category</h2>
+                    <USelectMenu label="Select your category" v-model="selectedCategory" :loading="loading" placeholder="Select a data" class="w-full mb-2" @change="fetchSelectedData" :items="selectCategories"/>
+                    <div v-if="action.value == 'delete' && selectedCategory.value != null">
+                        <Button class="p-3 mt-5 bg-red-600" @click="deleteCategory">Delete</Button>
+                    </div>
+                </div>
+                <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add a category</h2>
+                    <UFormField label="Category Name" required>
+                        <UInput label="Category name" placeholder="Enter the category name" v-model="modelData.category_name" class="w-full mb-2"/>
+                    </UFormField>
+                    <Button class="p-3 mt-5" @click="addCategory">Add</Button>
+                </div>
+                <div v-if="action.value == 'edit' && selectedCategory.value != null" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Edit a category</h2>
+                    <UFormField label="Category Name" required>
+                        <UInput label="Category name" placeholder="Enter the category name" v-model="fetchedSelectedData.category_name" class="w-full mb-2"/>
+                    </UFormField>
+                    <Button class="p-3 mt-5" @click="editCategory">Edit</Button>
+                </div>
             </div>
         </div>
-        <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add a category</h2>
-            <UFormField label="Category Name" required>
-                <UInput label="Category name" placeholder="Enter the category name" v-model="modelData.category_name" class="w-full mb-2"/>
-            </UFormField>
-            <Button class="p-3 mt-5" @click="addCategory">Add</Button>
-        </div>
-        <div v-if="action.value == 'edit' && selectedCategory.value != null" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Edit a category</h2>
-            <UFormField label="Category Name" required>
-                <UInput label="Category name" placeholder="Enter the category name" v-model="fetchedSelectedData.category_name" class="w-full mb-2"/>
-            </UFormField>
-            <Button class="p-3 mt-5" @click="editCategory">Edit</Button>
-        </div>
-    </div>
+    </section>
 </template>
 
 <script setup>

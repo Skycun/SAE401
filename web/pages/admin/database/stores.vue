@@ -1,81 +1,85 @@
 <template>
-    <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Stores</h2>
-    <div class="m-5 bg-white rounded-[20px] p-5 ">
-        <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
-        <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
-            {
-                label: 'Add',
-                value: 'add'
-            },
-            {
-                label: 'Edit',
-                value: 'edit'
-            },
-            {
-                label: 'Delete',
-                value: 'delete'
-            }
-        ]"/>
-    </div>
-    <div v-if="action">
-        <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select a store</h2>
-            <USelectMenu label="Select a store" v-model="selectedStore" :loading="loading" placeholder="Select a store" class="w-full mb-2" @change="fetchSelectedData" :items="selectStores"/>
-            <div v-if="action.value == 'delete' && selectedStore && selectedStore.value != null">
-                <Button class="p-3 mt-5 bg-red-600" @click="deleteStore">Delete</Button>
+    <section class="m-5 flex flex-col justify-center items-center">
+        <div class="w-full lg:w-1/2 xl:w-1/3">
+            <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Stores</h2>
+            <div class="m-5 bg-white rounded-[20px] p-5 ">
+                <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
+                <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
+                    {
+                        label: 'Add',
+                        value: 'add'
+                    },
+                    {
+                        label: 'Edit',
+                        value: 'edit'
+                    },
+                    {
+                        label: 'Delete',
+                        value: 'delete'
+                    }
+                ]"/>
+            </div>
+            <div v-if="action">
+                <div v-if="action.value !='add'" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Select a store</h2>
+                    <USelectMenu label="Select a store" v-model="selectedStore" :loading="loading" placeholder="Select a store" class="w-full mb-2" @change="fetchSelectedData" :items="selectStores"/>
+                    <div v-if="action.value == 'delete' && selectedStore && selectedStore.value != null">
+                        <Button class="p-3 mt-5 bg-red-600" @click="deleteStore">Delete</Button>
+                    </div>
+                </div>
+                <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add a store</h2>
+                    <UFormField label="Store Name" required>
+                        <UInput label="Store name" placeholder="Enter the store name" v-model="modelData.store_name" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Phone" required>
+                        <UInput label="Phone" placeholder="Enter the phone number" v-model="modelData.phone" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Email" required>
+                        <UInput label="Email" type="email" placeholder="Enter the email address" v-model="modelData.email" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Street" required>
+                        <UInput label="Street" placeholder="Enter the street address" v-model="modelData.street" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="City" required>
+                        <UInput label="City" placeholder="Enter the city" v-model="modelData.city" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="State" required>
+                        <UInput label="State" placeholder="Enter the state" v-model="modelData.state" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="ZIP Code" required>
+                        <UInput label="ZIP Code" placeholder="Enter the ZIP code" v-model="modelData.zip_code" class="w-full mb-2"/>
+                    </UFormField>
+                    <Button class="p-3 mt-5" @click="addStore">Add</Button>
+                </div>
+                <div v-if="action.value == 'edit' && selectedStore && selectedStore.value != null" class="m-5 bg-white rounded-[20px] p-5 ">
+                    <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Edit a store</h2>
+                    <UFormField label="Store Name" required>
+                        <UInput label="Store name" placeholder="Enter the store name" v-model="fetchedSelectedData.store_name" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Phone" required>
+                        <UInput label="Phone" placeholder="Enter the phone number" v-model="fetchedSelectedData.phone" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Email" required>
+                        <UInput label="Email" type="email" placeholder="Enter the email address" v-model="fetchedSelectedData.email" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="Street" required>
+                        <UInput label="Street" placeholder="Enter the street address" v-model="fetchedSelectedData.street" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="City" required>
+                        <UInput label="City" placeholder="Enter the city" v-model="fetchedSelectedData.city" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="State" required>
+                        <UInput label="State" placeholder="Enter the state" v-model="fetchedSelectedData.state" class="w-full mb-2"/>
+                    </UFormField>
+                    <UFormField label="ZIP Code" required>
+                        <UInput label="ZIP Code" placeholder="Enter the ZIP code" v-model="fetchedSelectedData.zip_code" class="w-full mb-2"/>
+                    </UFormField>
+                    <Button class="p-3 mt-5" @click="editStore">Edit</Button>
+                </div>
             </div>
         </div>
-        <div v-if="action.value == 'add'" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Add a store</h2>
-            <UFormField label="Store Name" required>
-                <UInput label="Store name" placeholder="Enter the store name" v-model="modelData.store_name" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Phone" required>
-                <UInput label="Phone" placeholder="Enter the phone number" v-model="modelData.phone" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Email" required>
-                <UInput label="Email" type="email" placeholder="Enter the email address" v-model="modelData.email" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Street" required>
-                <UInput label="Street" placeholder="Enter the street address" v-model="modelData.street" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="City" required>
-                <UInput label="City" placeholder="Enter the city" v-model="modelData.city" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="State" required>
-                <UInput label="State" placeholder="Enter the state" v-model="modelData.state" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="ZIP Code" required>
-                <UInput label="ZIP Code" placeholder="Enter the ZIP code" v-model="modelData.zip_code" class="w-full mb-2"/>
-            </UFormField>
-            <Button class="p-3 mt-5" @click="addStore">Add</Button>
-        </div>
-        <div v-if="action.value == 'edit' && selectedStore && selectedStore.value != null" class="m-5 bg-white rounded-[20px] p-5 ">
-            <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Edit a store</h2>
-            <UFormField label="Store Name" required>
-                <UInput label="Store name" placeholder="Enter the store name" v-model="fetchedSelectedData.store_name" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Phone" required>
-                <UInput label="Phone" placeholder="Enter the phone number" v-model="fetchedSelectedData.phone" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Email" required>
-                <UInput label="Email" type="email" placeholder="Enter the email address" v-model="fetchedSelectedData.email" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="Street" required>
-                <UInput label="Street" placeholder="Enter the street address" v-model="fetchedSelectedData.street" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="City" required>
-                <UInput label="City" placeholder="Enter the city" v-model="fetchedSelectedData.city" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="State" required>
-                <UInput label="State" placeholder="Enter the state" v-model="fetchedSelectedData.state" class="w-full mb-2"/>
-            </UFormField>
-            <UFormField label="ZIP Code" required>
-                <UInput label="ZIP Code" placeholder="Enter the ZIP code" v-model="fetchedSelectedData.zip_code" class="w-full mb-2"/>
-            </UFormField>
-            <Button class="p-3 mt-5" @click="editStore">Edit</Button>
-        </div>
-    </div>
+    </section>
 </template>
 
 <script setup>
