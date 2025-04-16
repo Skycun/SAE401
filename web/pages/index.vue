@@ -1,5 +1,5 @@
     <template>
-        <SearchBar class="lg:mx-40"/>
+        <SearchBar class="lg:mx-20 xl:mx-40"/>
         <!-- Les 3 boutons d'accueil -->
         <section class="my-10 mx-5 xl:mx-40 lg:mx-20 lg:h-96 lg:grid lg:grid-cols-[66%_33%] lg:gap-5">
             <NuxtLink :to="{ path: '/search', query: { brand: '1' } }">
