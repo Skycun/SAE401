@@ -27,7 +27,7 @@
             </div>
         </section>
         <!-- Des Produits mis en avant -->
-        <section class="grid grid-cols-2 min-lg:grid-cols-4 gap-5 min-lg:mx-40 max-lg:mx-5">
+        <section class="grid grid-cols-2 min-lg:grid-cols-5 gap-5 min-lg:mx-40 max-lg:mx-5">
             <!-- Mobile Card -->
             <div v-if="data && data.data" v-for="product in data.data">
                 <MobileCard :product="product"/>

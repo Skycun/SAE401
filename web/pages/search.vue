@@ -3,7 +3,7 @@
     <!-- Filtrer -->
     <section class="max-lg:mx-5 lg:mx-20 xl:mx-40 lg:grid lg:grid-cols-[75%_25%] lg:gap-5">
         <div class="lg:order-2 my-10 lg:sticky lg:top-20 lg:h-[80vh] lg:overflow-y-auto">
-            <UCollapsible v-model="openFiltrer" class="flex flex-col gap-2 rounded-[20px] bg-indigo-600 p-2">
+            <UCollapsible class="flex flex-col gap-2 rounded-[20px] bg-indigo-600 p-2">
                 <UButton class="group" label="Filtres" color="neutral" variant="ghost" trailing-icon="i-lucide-chevron-down"
                     :ui="{
                         trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform duration-200'
