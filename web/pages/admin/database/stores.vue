@@ -103,13 +103,13 @@ const modelData = ref({
 
 // Charger les magasins au démarrage
 
-onMounted(() => {
-    fetchStores(); 
-});
+
+fetchStores(); 
+
 
 async function fetchStores(){
     loading.value = true;
-    const { status, data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stores', {
+    const { status, data } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stores', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

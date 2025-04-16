@@ -104,14 +104,12 @@ const modelData = ref({
 });
 
 // Charger les employés et les magasins au démarrage
-onMounted(() => {
-    fetchEmployees(); 
-    fetchStores();
-});
+fetchEmployees(); 
+fetchStores();
 
 async function fetchEmployees(){
     loading.value = true;
-    const { status, data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/employees', {
+    const { status, data } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/employees', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -140,7 +138,7 @@ async function fetchEmployees(){
 
 async function fetchStores(){
     loadingStores.value = true;
-    const { data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stores', {
+    const { data } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stores', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

@@ -87,13 +87,12 @@ const fetchedProductFromStore = ref('');
 const selectFetchedProductFromStore = ref({});
 const selectedFetchedProductFromStore = ref('');
 
-onMounted(() => {
-    fetchStores();
-    fetchProducts();
-});
+fetchStores();
+fetchProducts();
+
 
 async function fetchStores() {
-    const { status, data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stores', {
+    const { status, data } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/stores', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -111,7 +110,7 @@ async function fetchStores() {
 }
 
 async function fetchProducts(){
-    const { status, data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/products', {
+    const { status, data } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/products', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

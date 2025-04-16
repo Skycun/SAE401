@@ -99,15 +99,13 @@ const modelData = ref({
 
 // Charger les produits, marques et catégories au démarrage
 
-onMounted(() => {
-    fetchProducts(); 
-    fetchBrands(); 
-    fetchCategories(); 
-});
+fetchProducts(); 
+fetchBrands(); 
+fetchCategories(); 
 
 async function fetchProducts(){
     loading.value = true;
-    const { status, data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/products', {
+    const { status, data } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/products', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -136,7 +134,7 @@ async function fetchProducts(){
 
 async function fetchBrands(){
     loadingBrands.value = true;
-    const { data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/brands', {
+    const { data } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/brands', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -165,7 +163,7 @@ async function fetchBrands(){
 
 async function fetchCategories(){
     loadingCategories.value = true;
-    const { data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/categories', {
+    const { data } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/categories', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

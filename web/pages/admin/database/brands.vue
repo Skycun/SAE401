@@ -64,7 +64,7 @@ onMounted(() => {
 });
 
 async function fetchBrands(){
-    const { status, data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/brands', {
+    const { status, data } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/brands', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
