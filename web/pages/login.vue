@@ -1,19 +1,20 @@
 <template>
-    <div class="m-5 bg-white rounded-[20px] p-5 py-10 my-10">
-        <h2 class="text-3xl text-indigo-950 flex justify-center mb-10">Login</h2>
-        <p v-show="error" class="text-red-600 flex justify-center mb-2">{{ error }}</p>
-        <div class="flex flex-col gap-5 w-full">
-            <label for="email" class="text-indigo-950">Email</label>
-            <input type="text" v-model="email" id="email" placeholder="Email" class="w-full placeholder-indigo-900 bg-indigo-200 text-indigo-950 rounded-full h-14 px-6" />
-            <label for="password" class="text-indigo-950">Password</label>
-            <input type="password" id="password" v-model="password" placeholder="Password" class="w-full placeholder-indigo-900 bg-indigo-200 text-indigo-950 rounded-full h-14 px-6" />
-            <div>
-                <input type="checkbox" id="remember" v-model="remember" class="w-4 h-4 text-indigo-600"/> <label for="remember" class="text-indigo-950">Remember me</label>
+    <section class="flex flex-col justify-center items-center m-5">
+        <div class="bg-white rounded-[20px] p-5 py-10 my-10 w-full lg:w-1/2 xl:w-1/3">
+            <h2 class="text-3xl text-indigo-950 flex justify-center mb-10">Login</h2>
+            <p v-show="error" class="text-red-600 flex justify-center mb-2">{{ error }}</p>
+            <div class="flex flex-col gap-5 w-full">
+                <label for="email" class="text-indigo-950">Email</label>
+                <input type="text" v-model="email" id="email" placeholder="Email" class="w-full placeholder-indigo-900 bg-indigo-200 text-indigo-950 rounded-full h-14 px-6" />
+                <label for="password" class="text-indigo-950">Password</label>
+                <input type="password" id="password" v-model="password" placeholder="Password" class="w-full placeholder-indigo-900 bg-indigo-200 text-indigo-950 rounded-full h-14 px-6" />
+                <div>
+                    <input type="checkbox" id="remember" v-model="remember" class="w-4 h-4 text-indigo-600"/> <label for="remember" class="text-indigo-950">Remember me</label>
+                </div>
+                <button class="bg-indigo-600 text-white rounded-full h-14" @click="login">Login</button>
             </div>
-            <button class="bg-indigo-600 text-white rounded-full h-14" @click="login">Login</button>
         </div>
-    </div>
-    
+    </section>
 </template>
 
 <script setup>
