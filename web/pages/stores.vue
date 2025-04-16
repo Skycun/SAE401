@@ -3,8 +3,8 @@
     <div v-if="status === 'pending'" class="m-5 bg-white rounded-[20px] p-5 ">
         <h2>Loading Stores</h2>
     </div>
-    <div v-else>
-        <div v-for="store in storesData" :key="store.store_id" class="m-5 bg-white rounded-[20px] p-5 py-10">
+    <div v-else class="lg:flex lg:mx-20 xl:mx-40 lg:gap-10 lg:my-10">
+        <div v-for="store in storesData" :key="store.store_id" class="max-lg:m-5 bg-white rounded-[20px] p-5 py-10">
             <h2 class="text-indigo-600 text-xl flex justify-center items-center mb-5">{{ store.store_name }}</h2>
             <p class="text-indigo-950 mb-5">Address: {{ store.street }}, {{ store.city }}, {{ store.state }} {{ store.zip_code }}</p>
             <h3 class="text-indigo-600 ">Contact the store at :</h3>
