@@ -83,6 +83,15 @@
 </template>
 
 <script setup>
+
+//Sécurité si l'utilisateur n'est pas connecté
+const user_data = useCookie('user_data');
+if(!user_data.value){
+    const router = useRouter();
+    router.push('/login');
+}
+
+
 const action = ref("");
 const stores = ref([]);
 const selectStores = ref([]);
