@@ -6,7 +6,7 @@
             <div class="bg-indigo-600 min-h-52 lg:h-96 rounded-[20px] bg-cover bg-center bg-no-repeat p-5 flex justify-between flex-col" 
                 style="background-image: url('/images/moutain-rider.jpg');">
                 <h2 class="text-indigo-600 max-lg:text-2xl min-lg:text-5xl w-[50%]">Discover the Electra bikes</h2>
-                <button class="bg-indigo-600 text-indigo-50 py-2 rounded-[20px] w-[50%]">
+                <button class="bg-indigo-600 text-indigo-50 py-2 rounded-[20px] w-1/2 lg:w-1/3">
                     Discover
                 </button>
             </div>
