@@ -41,8 +41,7 @@
                                     { label: 'Employee', value: 'employee' },
                                     { label: 'Chief', value: 'chief' },
                                     { label: 'IT', value: 'it' }
-                                ]"
-                        />
+                                ]"/>
                     </UFormField>
                     <!-- Affiche le champ store uniquement pour IT, pas pour chief -->
                     <UFormField v-if="user_data.value?.employees_role === 'it'" label="Store" required>
