@@ -6,12 +6,19 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
+ * Class Products
+ *
+ * Represents a product entity in the database.
+ *
  * @ORM\Entity
  * @ORM\Table(name="products")
  */
 class Products
 {
     /**
+     * The unique identifier for the product.
+     *
+     * @var int
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -19,47 +26,66 @@ class Products
     private int $product_id;
 
     /**
+     * The name of the product.
+     *
+     * @var string
      * @ORM\Column(type="string")
      */
     private string $product_name;
 
     /**
+     * The brand associated with the product.
+     *
+     * @var Brands
      * @ORM\ManyToOne(targetEntity="Brands", inversedBy="products")
      * @ORM\JoinColumn(name="brand_id", referencedColumnName="brand_id")
      */
     private Brands $brand;
 
     /**
+     * The category associated with the product.
+     *
+     * @var Categories
      * @ORM\ManyToOne(targetEntity="Categories", inversedBy="products")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="category_id")
      */
     private Categories $category;
 
     /**
+     * The model year of the product.
+     *
+     * @var int
      * @ORM\Column(type="integer")
      */
     private int $model_year;
 
     /**
+     * The list price of the product.
+     *
+     * @var float
      * @ORM\Column(type="float")
      */
     private float $list_price;
 
     /**
-     * @ORM\OneToMany(targetEntity="Stocks", mappedBy="product")
+     * The collection of stocks associated with this product.
+     *
      * @var Collection<int, Stocks>
+     * @ORM\OneToMany(targetEntity="Stocks", mappedBy="product")
      */
     private Collection $stocks;
 
+    /**
+     * Products constructor.
+     * Initializes the stocks collection.
+     */
     public function __construct()
     {
         $this->stocks = new ArrayCollection();
     }
 
-    // Getters and Setters
-
-        /**
-     * Get the value of product_id
+    /**
+     * Get the value of product_id.
      *
      * @return int
      */
@@ -69,7 +95,7 @@ class Products
     }
 
     /**
-     * Set the value of product_id
+     * Set the value of product_id.
      *
      * @param int $product_id
      * @return self
@@ -81,7 +107,7 @@ class Products
     }
 
     /**
-     * Get the value of product_name
+     * Get the value of product_name.
      *
      * @return string
      */
@@ -91,7 +117,7 @@ class Products
     }
 
     /**
-     * Set the value of product_name
+     * Set the value of product_name.
      *
      * @param string $product_name
      * @return self
@@ -103,7 +129,7 @@ class Products
     }
 
     /**
-     * Get the value of brand
+     * Get the brand associated with the product.
      *
      * @return Brands
      */
@@ -113,7 +139,7 @@ class Products
     }
 
     /**
-     * Set the value of brand
+     * Set the brand associated with the product.
      *
      * @param Brands $brand
      * @return self
@@ -125,7 +151,7 @@ class Products
     }
 
     /**
-     * Get the value of category
+     * Get the category associated with the product.
      *
      * @return Categories
      */
@@ -135,7 +161,7 @@ class Products
     }
 
     /**
-     * Set the value of category
+     * Set the category associated with the product.
      *
      * @param Categories $category
      * @return self
@@ -147,7 +173,7 @@ class Products
     }
 
     /**
-     * Get the value of model_year
+     * Get the model year of the product.
      *
      * @return int
      */
@@ -157,7 +183,7 @@ class Products
     }
 
     /**
-     * Set the value of model_year
+     * Set the model year of the product.
      *
      * @param int $model_year
      * @return self
@@ -169,7 +195,7 @@ class Products
     }
 
     /**
-     * Get the value of list_price
+     * Get the list price of the product.
      *
      * @return float
      */
@@ -179,7 +205,7 @@ class Products
     }
 
     /**
-     * Set the value of list_price
+     * Set the list price of the product.
      *
      * @param float $list_price
      * @return self
@@ -190,11 +216,22 @@ class Products
         return $this;
     }
 
+    /**
+     * Get the collection of stocks associated with this product.
+     *
+     * @return Collection<int, Stocks>
+     */
     public function getStocks(): Collection
     {
         return $this->stocks;
     }
 
+    /**
+     * Add a stock to the product.
+     *
+     * @param Stocks $stock
+     * @return self
+     */
     public function addStock(Stocks $stock): self
     {
         if (!$this->stocks->contains($stock)) {
@@ -204,6 +241,12 @@ class Products
         return $this;
     }
 
+    /**
+     * Remove a stock from the product.
+     *
+     * @param Stocks $stock
+     * @return self
+     */
     public function removeStock(Stocks $stock): self
     {
         if ($this->stocks->removeElement($stock)) {
@@ -214,6 +257,11 @@ class Products
         return $this;
     }
 
+    /**
+     * Serialize the Products object to an array for JSON representation.
+     *
+     * @return array
+     */
     public function jsonSerialize()
     {
         $res = [

@@ -6,12 +6,19 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
+ * Class Stores
+ *
+ * Represents a store entity in the database.
+ *
  * @ORM\Entity
  * @ORM\Table(name="stores")
  */
 class Stores
 {
     /**
+     * The unique identifier for the store.
+     *
+     * @var int
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -19,66 +26,89 @@ class Stores
     private int $store_id;
 
     /**
+     * The name of the store.
+     *
+     * @var string
      * @ORM\Column(type="string")
      */
     private string $store_name;
 
     /**
+     * The phone number of the store.
+     *
+     * @var string
      * @ORM\Column(type="string")
      */
     private string $phone;
 
     /**
+     * The email address of the store.
+     *
+     * @var string
      * @ORM\Column(type="string")
      */
     private string $email;
 
     /**
+     * The street address of the store.
+     *
+     * @var string
      * @ORM\Column(type="string")
      */
     private string $street;
 
     /**
+     * The city where the store is located.
+     *
+     * @var string
      * @ORM\Column(type="string")
      */
     private string $city;
 
     /**
+     * The state where the store is located.
+     *
+     * @var string
      * @ORM\Column(type="string")
      */
     private string $state;
 
     /**
+     * The zip code of the store.
+     *
+     * @var string
      * @ORM\Column(type="string")
      */
     private string $zip_code;
 
     /**
-     * @ORM\OneToMany(targetEntity="Employees", mappedBy="store")
+     * The collection of employees working at this store.
+     *
      * @var Collection<int, Employees>
+     * @ORM\OneToMany(targetEntity="Employees", mappedBy="store")
      */
     private Collection $employees;
 
     /**
-     * @ORM\OneToMany(targetEntity="Stocks", mappedBy="store")
+     * The collection of stocks associated with this store.
+     *
      * @var Collection<int, Stocks>
+     * @ORM\OneToMany(targetEntity="Stocks", mappedBy="store")
      */
     private Collection $stocks;
 
-    // Constructor
-
+    /**
+     * Stores constructor.
+     * Initializes the employees and stocks collections.
+     */
     public function __construct()
     {
         $this->employees = new ArrayCollection();
         $this->stocks = new ArrayCollection();
     }
 
-
-
-    // Getters and Setters
-
-        /**
-     * Get the value of store_id
+    /**
+     * Get the value of store_id.
      *
      * @return int
      */
@@ -88,7 +118,7 @@ class Stores
     }
 
     /**
-     * Set the value of store_id
+     * Set the value of store_id.
      *
      * @param int $store_id
      * @return self
@@ -100,7 +130,7 @@ class Stores
     }
 
     /**
-     * Get the value of store_name
+     * Get the value of store_name.
      *
      * @return string
      */
@@ -110,7 +140,7 @@ class Stores
     }
 
     /**
-     * Set the value of store_name
+     * Set the value of store_name.
      *
      * @param string $store_name
      * @return self
@@ -122,7 +152,7 @@ class Stores
     }
 
     /**
-     * Get the value of phone
+     * Get the value of phone.
      *
      * @return string
      */
@@ -132,7 +162,7 @@ class Stores
     }
 
     /**
-     * Set the value of phone
+     * Set the value of phone.
      *
      * @param string $phone
      * @return self
@@ -144,7 +174,7 @@ class Stores
     }
 
     /**
-     * Get the value of email
+     * Get the value of email.
      *
      * @return string
      */
@@ -154,7 +184,7 @@ class Stores
     }
 
     /**
-     * Set the value of email
+     * Set the value of email.
      *
      * @param string $email
      * @return self
@@ -166,7 +196,7 @@ class Stores
     }
 
     /**
-     * Get the value of street
+     * Get the value of street.
      *
      * @return string
      */
@@ -176,7 +206,7 @@ class Stores
     }
 
     /**
-     * Set the value of street
+     * Set the value of street.
      *
      * @param string $street
      * @return self
@@ -188,7 +218,7 @@ class Stores
     }
 
     /**
-     * Get the value of city
+     * Get the value of city.
      *
      * @return string
      */
@@ -198,7 +228,7 @@ class Stores
     }
 
     /**
-     * Set the value of city
+     * Set the value of city.
      *
      * @param string $city
      * @return self
@@ -210,7 +240,7 @@ class Stores
     }
 
     /**
-     * Get the value of state
+     * Get the value of state.
      *
      * @return string
      */
@@ -220,7 +250,7 @@ class Stores
     }
 
     /**
-     * Set the value of state
+     * Set the value of state.
      *
      * @param string $state
      * @return self
@@ -232,7 +262,7 @@ class Stores
     }
 
     /**
-     * Get the value of zip_code
+     * Get the value of zip_code.
      *
      * @return string
      */
@@ -242,7 +272,7 @@ class Stores
     }
 
     /**
-     * Set the value of zip_code
+     * Set the value of zip_code.
      *
      * @param string $zip_code
      * @return self
@@ -253,7 +283,9 @@ class Stores
         return $this;
     }
 
-     /**
+    /**
+     * Get the collection of employees working at this store.
+     *
      * @return Collection<int, Employees>
      */
     public function getEmployees(): Collection
@@ -261,6 +293,12 @@ class Stores
         return $this->employees;
     }
 
+    /**
+     * Add an employee to the store.
+     *
+     * @param Employees $employee
+     * @return self
+     */
     public function addEmployee(Employees $employee): self
     {
         if (!$this->employees->contains($employee)) {
@@ -270,6 +308,12 @@ class Stores
         return $this;
     }
 
+    /**
+     * Remove an employee from the store.
+     *
+     * @param Employees $employee
+     * @return self
+     */
     public function removeEmployee(Employees $employee): self
     {
         if ($this->employees->removeElement($employee)) {
@@ -281,11 +325,22 @@ class Stores
         return $this;
     }
 
+    /**
+     * Get the collection of stocks associated with this store.
+     *
+     * @return Collection<int, Stocks>
+     */
     public function getStocks(): Collection
     {
         return $this->stocks;
     }
 
+    /**
+     * Add a stock to the store.
+     *
+     * @param Stocks $stock
+     * @return self
+     */
     public function addStock(Stocks $stock): self
     {
         if (!$this->stocks->contains($stock)) {
@@ -295,6 +350,12 @@ class Stores
         return $this;
     }
 
+    /**
+     * Remove a stock from the store.
+     *
+     * @param Stocks $stock
+     * @return self
+     */
     public function removeStock(Stocks $stock): self
     {
         if ($this->stocks->removeElement($stock)) {
@@ -305,7 +366,13 @@ class Stores
         return $this;
     }
 
-    public function jsonSerialize(){
+    /**
+     * Serialize the Stores object to an array for JSON representation.
+     *
+     * @return array
+     */
+    public function jsonSerialize()
+    {
         $res = [
             'store_id' => $this->getStoreId(),
             'store_name' => $this->getStoreName(),
@@ -318,5 +385,4 @@ class Stores
         ];
         return $res;
     }
-
 }
