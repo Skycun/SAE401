@@ -1,0 +1,1370 @@
+openapi: 3.0.0
+info:
+  title: Bike Store API
+  description: API for managing bike stores, products, inventory and employees
+  version: 1.0.0
+  
+servers:
+  - url: https://mirrorsoul.alwaysdata.net/sae401/API/API/
+    description: Api link
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Api
+  
+  schemas:
+    Brand:
+      type: object
+      properties:
+        brand_id:
+          type: integer
+          example: 1
+        brand_name:
+          type: string
+          example: "Trek"
+    
+    Category:
+      type: object
+      properties:
+        category_id:
+          type: integer
+          example: 1
+        category_name:
+          type: string
+          example: "Mountain Bikes"
+    
+    Product:
+      type: object
+      properties:
+        product_id:
+          type: integer
+          example: 1
+        product_name:
+          type: string
+          example: "Trail Bike"
+        brand:
+          $ref: '#/components/schemas/Brand'
+        category:
+          $ref: '#/components/schemas/Category'
+        model_year:
+          type: integer
+          example: 2023
+        list_price:
+          type: number
+          format: float
+          example: 1299.99
+        stocks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Stock'
+    
+    Employee:
+      type: object
+      properties:
+        employees_id:
+          type: integer
+          example: 1
+        employees_name:
+          type: string
+          example: "John Doe"
+        employees_email:
+          type: string
+          example: "john@example.com"
+        employees_password:
+          type: string
+          example: "********"
+        employees_role:
+          type: string
+          example: "manager"
+        store:
+          $ref: '#/components/schemas/Store'
+    
+    Store:
+      type: object
+      properties:
+        store_id:
+          type: integer
+          example: 1
+        store_name:
+          type: string
+          example: "Downtown Bike Shop"
+        phone:
+          type: string
+          example: "(123) 456-7890"
+        email:
+          type: string
+          example: "contact@bikestore.com"
+        street:
+          type: string
+          example: "123 Main St"
+        city:
+          type: string
+          example: "New York"
+        state:
+          type: string
+          example: "NY"
+        zip_code:
+          type: string
+          example: "10001"
+    
+    Stock:
+      type: object
+      properties:
+        stock_id:
+          type: integer
+          example: 1
+        store:
+          type: object
+          properties:
+            store_id:
+              type: integer
+              example: 1
+            store_name:
+              type: string
+              example: "Downtown Bike Shop"
+        product:
+          type: object
+          properties:
+            product_id:
+              type: integer
+              example: 1
+            product_name:
+              type: string
+              example: "Trail Bike"
+        quantity:
+          type: integer
+          example: 10
+    
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Not found"
+    
+    SuccessResponse:
+      type: object
+      properties:
+        state:
+          type: string
+          example: "success"
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /brands:
+    get:
+      summary: Get all brands
+      description: Returns a list of all bike brands
+      security: []
+      responses:
+        '200':
+          description: A list of brands
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Brand'
+    
+    post:
+      summary: Create a new brand
+      description: Add a new bike brand to the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - brand_name
+              properties:
+                brand_name:
+                  type: string
+                  example: "Specialized"
+      responses:
+        '200':
+          description: Brand created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      brand:
+                        $ref: '#/components/schemas/Brand'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    
+    put:
+      summary: Update a brand
+      description: Update an existing bike brand
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - brand_id
+                - brand_name
+              properties:
+                brand_id:
+                  type: integer
+                  example: 1
+                brand_name:
+                  type: string
+                  example: "Trek Bikes"
+      responses:
+        '200':
+          description: Brand updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      brand:
+                        $ref: '#/components/schemas/Brand'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Brand not found
+
+  /brands/{id}:
+    get:
+      summary: Get a specific brand
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Brand found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Brand'
+        '404':
+          description: Brand not found
+  
+  /brands/search/{query}:
+    get:
+      summary: Search brands by name
+      security: []
+      parameters:
+        - name: query
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Brands matching the search
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Brand'
+        '404':
+          description: No brands found
+
+  /categories:
+    get:
+      summary: Get all categories
+      description: Returns a list of all bike categories
+      security: []
+      responses:
+        '200':
+          description: A list of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+    
+    post:
+      summary: Create a new category
+      description: Add a new bike category to the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - category_name
+              properties:
+                category_name:
+                  type: string
+                  example: "Electric Bikes"
+      responses:
+        '200':
+          description: Category created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      category:
+                        $ref: '#/components/schemas/Category'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+    
+    put:
+      summary: Update a category
+      description: Update an existing bike category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+                - category_name
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                category_name:
+                  type: string
+                  example: "Premium Mountain Bikes"
+      responses:
+        '200':
+          description: Category updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      category:
+                        $ref: '#/components/schemas/Category'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Category not found
+
+  /categories/{id}:
+    get:
+      summary: Get a specific category
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Category found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+        '404':
+          description: Category not found
+          
+  /categories/search/{query}:
+    get:
+      summary: Search categories by name
+      security: []
+      parameters:
+        - name: query
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Categories matching the search
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+        '404':
+          description: No categories found
+
+  /products:
+    get:
+      summary: Get all products
+      description: Returns a list of all bike products
+      security: []
+      responses:
+        '200':
+          description: A list of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    
+    post:
+      summary: Create a new product
+      description: Add a new bike product to the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - product_name
+                - brand_id
+                - category_id
+                - model_year
+                - list_price
+              properties:
+                product_name:
+                  type: string
+                  example: "Mountain Trail 429"
+                brand_id:
+                  type: integer
+                  example: 1
+                category_id:
+                  type: integer
+                  example: 2
+                model_year:
+                  type: integer
+                  example: 2023
+                list_price:
+                  type: number
+                  format: float
+                  example: 1499.99
+      responses:
+        '200':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      product:
+                        $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Brand or category not found
+    
+    put:
+      summary: Update a product
+      description: Update an existing bike product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                product_name:
+                  type: string
+                  example: "Mountain Trail 429 Pro"
+                brand_id:
+                  type: integer
+                  example: 1
+                category_id:
+                  type: integer
+                  example: 2
+                model_year:
+                  type: integer
+                  example: 2024
+                list_price:
+                  type: number
+                  format: float
+                  example: 1599.99
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      product:
+                        $ref: '#/components/schemas/Product'
+                      changes:
+                        type: string
+                        example: "3 changes"
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Product, brand, or category not found
+
+  /products/{id}:
+    get:
+      summary: Get a specific product
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+    
+    delete:
+      summary: Delete a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Product deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Product not found
+          
+  /products/search/{query}:
+    get:
+      summary: Search products by name
+      security: []
+      parameters:
+        - name: query
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Products matching the search
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '404':
+          description: No products found
+
+  /products/category/{category_id}:
+    get:
+      summary: Get products by category
+      security: []
+      parameters:
+        - name: category_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Products in the category
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '404':
+          description: Category not found or no products in category
+
+  /products/brand/{brand_id}:
+    get:
+      summary: Get products by brand
+      security: []
+      parameters:
+        - name: brand_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Products from the brand
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '404':
+          description: Brand not found or no products from brand
+
+  /products/brand/{brand_id}/{number_of_products}:
+    get:
+      summary: Get limited number of products by brand
+      security: []
+      parameters:
+        - name: brand_id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: number_of_products
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Limited products from the brand
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '404':
+          description: Brand not found or no products from brand
+
+  /products/advancedsearch:
+    get:
+      summary: Advanced product search with filters
+      description: Search products with multiple filters
+      security: []
+      parameters:
+        - name: priceMin
+          in: query
+          required: false
+          schema:
+            type: number
+            format: float
+          description: Minimum price filter
+          example: 500
+        - name: priceMax
+          in: query
+          required: false
+          schema:
+            type: number
+            format: float
+          description: Maximum price filter
+          example: 2000
+        - name: model_year
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by model year
+          example: 2023
+        - name: brand_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by brand ID
+          example: 1
+        - name: category_id
+          in: query
+          required: false
+          schema:
+            type: integer
+          description: Filter by category ID
+          example: 2
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Search by product name
+          example: "mountain"
+      responses:
+        '200':
+          description: Products matching the filters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '404':
+          description: No products found matching the filters
+
+  /employees:
+    get:
+      summary: Get all employees
+      description: Returns a list of all employees
+      security: []
+      responses:
+        '200':
+          description: A list of employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+    
+    post:
+      summary: Create a new employee
+      description: Add a new employee to the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - employees_name
+                - employees_email
+                - employees_password
+                - employees_role
+                - store_id
+              properties:
+                employees_name:
+                  type: string
+                  example: "Jane Smith"
+                employees_email:
+                  type: string
+                  example: "jane@example.com"
+                employees_password:
+                  type: string
+                  example: "secure123"
+                employees_role:
+                  type: string
+                  example: "sales"
+                store_id:
+                  type: integer
+                  example: 1
+      responses:
+        '200':
+          description: Employee created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      employee:
+                        $ref: '#/components/schemas/Employee'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Store not found
+    
+    put:
+      summary: Update an employee
+      description: Update an existing employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                employees_name:
+                  type: string
+                  example: "Jane Johnson"
+                employees_email:
+                  type: string
+                  example: "jane.johnson@example.com"
+                employees_password:
+                  type: string
+                  example: "newpassword123"
+                employees_role:
+                  type: string
+                  example: "manager"
+                store_id:
+                  type: integer
+                  example: 2
+      responses:
+        '200':
+          description: Employee updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      employee:
+                        $ref: '#/components/schemas/Employee'
+                      changes:
+                        type: string
+                        example: "3 changes"
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Employee or store not found
+
+  /employees/{id}:
+    get:
+      summary: Get a specific employee
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Employee found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+          description: Employee not found
+    
+    delete:
+      summary: Delete an employee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Employee deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Employee not found
+          
+  /employees/search/{query}:
+    get:
+      summary: Search employees by name
+      security: []
+      parameters:
+        - name: query
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Employees matching the search
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+        '404':
+          description: No employees found
+
+  /employees/store/{store_id}:
+    get:
+      summary: Get employees by store
+      security: []
+      parameters:
+        - name: store_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Employees in the store
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+        '404':
+          description: Store not found or no employees in store
+
+  /employees/login:
+    post:
+      summary: Employee login
+      description: Authenticate an employee
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: "john@example.com"
+                password:
+                  type: string
+                  example: "secure123"
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  state:
+                    type: string
+                    example: "success"
+                  message:
+                    type: string
+                    example: "You are connected"
+                  employee:
+                    $ref: '#/components/schemas/Employee'
+        '400':
+          description: Bad request - missing email or password
+        '404':
+          description: Employee not found or incorrect credentials
+
+  /stores:
+    get:
+      summary: Get all stores
+      description: Returns a list of all bike stores
+      security: []
+      responses:
+        '200':
+          description: A list of stores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Store'
+    
+    post:
+      summary: Create a new store
+      description: Add a new bike store to the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - store_name
+                - phone
+                - email
+                - street
+                - city
+                - state
+                - zip_code
+              properties:
+                store_name:
+                  type: string
+                  example: "Uptown Bike Shop"
+                phone:
+                  type: string
+                  example: "(987) 654-3210"
+                email:
+                  type: string
+                  example: "uptown@bikestore.com"
+                street:
+                  type: string
+                  example: "456 Oak St"
+                city:
+                  type: string
+                  example: "Chicago"
+                state:
+                  type: string
+                  example: "IL"
+                zip_code:
+                  type: string
+                  example: "60601"
+      responses:
+        '200':
+          description: Store created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      store:
+                        $ref: '#/components/schemas/Store'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+    
+    put:
+      summary: Update a store
+      description: Update an existing bike store
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                store_name:
+                  type: string
+                  example: "Downtown Bicycle Emporium"
+                phone:
+                  type: string
+                  example: "(123) 456-7890"
+                email:
+                  type: string
+                  example: "contact@bicycleemporium.com"
+                street:
+                  type: string
+                  example: "123 Main St"
+                city:
+                  type: string
+                  example: "New York"
+                state:
+                  type: string
+                  example: "NY"
+                zip_code:
+                  type: string
+                  example: "10001"
+      responses:
+        '200':
+          description: Store updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      store:
+                        $ref: '#/components/schemas/Store'
+                      changes:
+                        type: integer
+                        example: 2
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Store not found
+
+  /stores/{id}:
+    get:
+      summary: Get a specific store
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Store found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Store'
+        '404':
+          description: Store not found
+    
+    delete:
+      summary: Delete a store
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Store deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Store not found
+          
+  /stores/search/{query}:
+    get:
+      summary: Search stores by name
+      security: []
+      parameters:
+        - name: query
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Stores matching the search
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Store'
+        '404':
+          description: No stores found matching the query
+
+  /stocks:
+    get:
+      summary: Get all stocks
+      description: Returns a list of all inventory stocks
+      security: []
+      responses:
+        '200':
+          description: A list of stocks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Stock'
+    
+    post:
+      summary: Create a new stock record
+      description: Add a new inventory stock to the database
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - store_id
+                - product_id
+                - quantity
+              properties:
+                store_id:
+                  type: integer
+                  example: 1
+                product_id:
+                  type: integer
+                  example: 2
+                quantity:
+                  type: integer
+                  example: 15
+      responses:
+        '200':
+          description: Stock created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      stock:
+                        $ref: '#/components/schemas/Stock'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Store or product not found
+    
+    put:
+      summary: Update a stock record
+      description: Update an existing inventory stock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                id:
+                  type: integer
+                  example: 1
+                store_id:
+                  type: integer
+                  example: 1
+                product_id:
+                  type: integer
+                  example: 2
+                quantity:
+                  type: integer
+                  example: 20
+      responses:
+        '200':
+          description: Stock updated successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      stock:
+                        $ref: '#/components/schemas/Stock'
+        '400':
+          description: Bad request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Stock, store, or product not found
+
+  /stocks/{id}:
+    get:
+      summary: Get a specific stock record
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stock found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stock'
+        '404':
+          description: Stock not found
+    
+    delete:
+      summary: Delete a stock record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stock deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Stock not found
+
+  /stocks/store/{store_id}:
+    get:
+      summary: Get stocks by store
+      security: []
+      parameters:
+        - name: store_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Stocks in the store
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Stock'
+        '404':
+          description: Store not found or no stocks in store
+
+  /stocks/page/{page_number}:
+    get:
+      summary: Get paginated products with stock information
+      security: []
+      parameters:
+        - name: page_number
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Paginated products with stock information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 25
+                      totalItems:
+                        type: integer
+                        example: 100
+                      totalPages:
+                        type: integer
+                        example: 4
+        '400':
+          description: Bad request - invalid page parameter
