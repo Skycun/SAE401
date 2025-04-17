@@ -22,7 +22,6 @@
             </div>
         </div>
     </section>
-    <pre class="text-indigo-950">{{ user_data }}</pre>
 </template>
 
 <script setup>
