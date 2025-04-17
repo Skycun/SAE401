@@ -1,22 +1,13 @@
 <template>
-    <section class="m-5 flex flex-col justify-center items-center">
+    <section v-if="user_data && user_data.employees_role" class="m-5 flex flex-col justify-center items-center">
         <div class="w-full lg:w-1/2 xl:w-1/3">
             <h2 class="flex justify-center text-indigo-950 mt-10 text-3xl">Employees</h2>
             <div class="m-5 bg-white rounded-[20px] p-5 ">
                 <h2 class="text-indigo-950 text-xl flex justify-center items-center mb-5">Action</h2>
                 <USelectMenu label="Select your action" v-model="action" placeholder="Select an action" class="w-full mb-2" :items="[
-                    {
-                        label: 'Add',
-                        value: 'add'
-                    },
-                    {
-                        label: 'Edit',
-                        value: 'edit'
-                    },
-                    {
-                        label: 'Delete',
-                        value: 'delete'
-                    }
+                    { label: 'Add', value: 'add' },
+                    { label: 'Edit', value: 'edit' },
+                    { label: 'Delete', value: 'delete' }
                 ]"/>
             </div>
             <div v-if="action">
@@ -39,13 +30,22 @@
                         <UInput label="Employee password" placeholder="Enter the employee password" type="password" v-model="modelData.employees_password" class="w-full mb-2"/>
                     </UFormField>
                     <UFormField label="Employee Role" required>
-                        <USelectMenu label="Select a role" v-model="modelData.employees_role" placeholder="Select a role" class="w-full mb-2" :items="[
-                            { label: 'Employee', value: 'employee' },
-                            { label: 'Chief', value: 'chief' },
-                            { label: 'IT', value: 'it' }
-                        ]"/>
+                        <USelectMenu
+                            label="Select a role"
+                            v-model="modelData.employees_role"
+                            placeholder="Select a role"
+                            class="w-full mb-2"
+                            :items="user_data?.employees_role === 'chief'
+                                ? [{ label: 'Employee', value: 'employee' }]
+                                : [
+                                    { label: 'Employee', value: 'employee' },
+                                    { label: 'Chief', value: 'chief' },
+                                    { label: 'IT', value: 'it' }
+                                ]"
+                        />
                     </UFormField>
-                    <UFormField label="Store" required>
+                    <!-- Affiche le champ store uniquement pour IT, pas pour chief -->
+                    <UFormField v-if="user_data.value?.employees_role === 'it'" label="Store" required>
                         <USelectMenu label="Select a store" v-model="modelData.store_id" :loading="loadingStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores"/>
                     </UFormField>
                     <Button class="p-3 mt-5" @click="addEmployee">Add</Button>
@@ -62,13 +62,21 @@
                         <UInput label="Employee password" placeholder="Leave empty to keep current password" type="password" v-model="newPassword" class="w-full mb-2"/>
                     </UFormField>
                     <UFormField label="Employee Role" required>
-                        <USelectMenu label="Select a role" v-model="fetchedSelectedData.employees_role" placeholder="Select a role" class="w-full mb-2" :items="[
-                            { label: 'Employee', value: 'employee' },
-                            { label: 'Chief', value: 'chief' },
-                            { label: 'IT', value: 'it' }
-                        ]"/>
+                        <USelectMenu
+                            label="Select a role"
+                            v-model="fetchedSelectedData.employees_role"
+                            placeholder="Select a role"
+                            class="w-full mb-2"
+                            :items="user_data?.employees_role === 'chief'
+                                ? [{ label: 'Employee', value: 'employee' }]
+                                : [
+                                    { label: 'Employee', value: 'employee' },
+                                    { label: 'Chief', value: 'chief' },
+                                    { label: 'IT', value: 'it' }
+                                ]"
+                        />
                     </UFormField>
-                    <UFormField label="Store" required>
+                    <UFormField v-if="user_data.value?.employees_role === 'it'" label="Store" required>
                         <USelectMenu label="Select a store" v-model="fetchedSelectedData.store_id" :loading="loadingStores" placeholder="Select a store" class="w-full mb-2" :items="selectStores"/>
                     </UFormField>
                     <Button class="p-3 mt-5" @click="editEmployee">Edit</Button>
@@ -76,6 +84,9 @@
             </div>
         </div>
     </section>
+    <div v-else class="flex justify-center items-center h-96">
+        <span>Chargement...</span>
+    </div>
 </template>
 
 <script setup>
@@ -87,7 +98,6 @@ if(!user_data.value){
     router.push('/login');
 }
 
-
 const action = ref("");
 const employees = ref([]);
 const selectEmployees = ref([]);
@@ -95,11 +105,7 @@ const selectedEmployee = ref(null);
 const fetchedSelectedData = ref({}); 
 const loading = ref(false);
 const toast = useToast();
-
-// Variable pour stocker un nouveau mot de passe lors de l'édition
 const newPassword = ref("");
-
-// Données pour les stores (magasins)
 const stores = ref([]);
 const selectStores = ref([]);
 const loadingStores = ref(false);
@@ -112,37 +118,43 @@ const modelData = ref({
     store_id: null
 });
 
-// Charger les employés et les magasins au démarrage
-fetchEmployees(); 
+// Charger les magasins
 fetchStores();
+// Charger les employés selon le rôle
+fetchEmployees();
 
 async function fetchEmployees(){
     loading.value = true;
-    const { status, data } = await useFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/employees', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    });
-    loading.value = false;
-    
-    if (data.value) {
-        employees.value = data.value;
-        selectEmployees.value = data.value.map((item) => {
-            return {
-                label: `${item.employees_name} (${item.employees_email})`,
-                value: item.employees_id
+    let url = 'https://mirrorsoul.alwaysdata.net/sae401/API/API/employees';
+    let employeesData = [];
+    // Si chief, ne récupère que les employés de son magasin
+    if(user_data.value.employees_role === "chief") {
+        url += `/store/${user_data.value.store.store_id}`;
+        const { data } = await useFetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
             }
         });
+        employeesData = data.value || [];
     } else {
-        toast.add({
-            title: 'Error',
-            description: "Failed to load employees",
-            color: 'error',
-            icon: 'bx:x'
+        // IT : récupère tous les employés
+        const { data } = await useFetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
         });
+        employeesData = data.value || [];
     }
+    employees.value = employeesData;
+    selectEmployees.value = employeesData.map((item) => ({
+        label: `${item.employees_name} (${item.employees_email})`,
+        value: item.employees_id
+    }));
+    loading.value = false;
 }
 
 async function fetchStores(){
@@ -155,28 +167,17 @@ async function fetchStores(){
         }
     });
     loadingStores.value = false;
-    
     if (data.value) {
         stores.value = data.value;
-        selectStores.value = data.value.map((item) => {
-            return {
-                label: item.store_name,
-                value: item.store_id
-            }
-        });
-    } else {
-        toast.add({
-            title: 'Error',
-            description: "Failed to load stores",
-            color: 'error',
-            icon: 'bx:x'
-        });
+        selectStores.value = data.value.map((item) => ({
+            label: item.store_name,
+            value: item.store_id
+        }));
     }
 }
 
 async function fetchSelectedData(){
     if (!selectedEmployee.value || !selectedEmployee.value.value) return;
-    
     loading.value = true;
     const { data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/employees/' + selectedEmployee.value.value, {
         method: 'GET',
@@ -186,27 +187,24 @@ async function fetchSelectedData(){
         }
     });
     loading.value = false;
-    
     if (data.value) {
         fetchedSelectedData.value = data.value;
-        // Réinitialiser le champ mot de passe
         newPassword.value = "";
-    } else {
-        toast.add({
-            title: 'Error',
-            description: "Failed to load employee details",
-            color: 'error',
-            icon: 'bx:x'
-        });
     }
 }
 
 // Fonction pour ajouter un employé
 async function addEmployee() {
-    // Validation des champs obligatoires
+    // Chief : force le store_id à celui du chief
+    let storeId = modelData.value.store_id;
+    if(user_data.value.employees_role === "chief") {
+        storeId = user_data.value.store.store_id;
+    } else {
+        storeId = parseInt(modelData.value.store_id?.value || modelData.value.store_id);
+    }
     if (!modelData.value.employees_name || !modelData.value.employees_email || 
         !modelData.value.employees_password || !modelData.value.employees_role || 
-        !modelData.value.store_id) {
+        !storeId) {
         toast.add({
             title: 'Error',
             description: "All fields are required",
@@ -215,7 +213,6 @@ async function addEmployee() {
         });
         return;
     }
-
     loading.value = true;
     const { data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/employees', {
         method: 'POST',
@@ -228,13 +225,11 @@ async function addEmployee() {
             employees_name: modelData.value.employees_name,
             employees_email: modelData.value.employees_email,
             employees_password: modelData.value.employees_password,
-            employees_role: modelData.value.employees_role.value,
-            store_id: parseInt(modelData.value.store_id.value)
+            employees_role: modelData.value.employees_role.value || modelData.value.employees_role,
+            store_id: storeId
         }
     });
     loading.value = false;
-    console.log(modelData.value.employees_name, modelData.value.employees_email, modelData.value.employees_password, modelData.value.employees_role, modelData.value.store_id);
-    
     if (data.value && !data.value.error) {
         toast.add({
             title: 'Success',
@@ -242,8 +237,6 @@ async function addEmployee() {
             color: 'success',
             icon: 'bx:check'
         });
-        
-        // Réinitialiser les champs
         modelData.value = {
             employees_name: null,
             employees_email: null,
@@ -251,8 +244,6 @@ async function addEmployee() {
             employees_role: null,
             store_id: null
         };
-        
-        // Actualiser la liste
         fetchEmployees();
     } else {
         toast.add({
@@ -267,11 +258,16 @@ async function addEmployee() {
 // Fonction pour modifier un employé
 async function editEmployee() {
     if (!selectedEmployee.value || !selectedEmployee.value.value) return;
-    
+    let storeId = fetchedSelectedData.value.store_id;
+    if(user_data.value.employees_role === "chief") {
+        storeId = user_data.value.store.store_id;
+    } else {
+        storeId = parseInt(fetchedSelectedData.value.store_id?.value || fetchedSelectedData.value.store_id);
+    }
     if (!fetchedSelectedData.value.employees_name || 
         !fetchedSelectedData.value.employees_email || 
         !fetchedSelectedData.value.employees_role || 
-        !fetchedSelectedData.value.store_id) {
+        !storeId) {
         toast.add({
             title: 'Error',
             description: "Name, email, role and store are required",
@@ -280,23 +276,17 @@ async function editEmployee() {
         });
         return;
     }
-
     loading.value = true;
-    
-    // Préparer les données à envoyer
     const payload = {
         id: fetchedSelectedData.value.employees_id,
         employees_name: fetchedSelectedData.value.employees_name,
         employees_email: fetchedSelectedData.value.employees_email,
-        employees_role: fetchedSelectedData.value.employees_role.value,
-        store_id: parseInt(fetchedSelectedData.value.store_id.value)
+        employees_role: fetchedSelectedData.value.employees_role.value || fetchedSelectedData.value.employees_role,
+        store_id: storeId
     };
-    
-    // Ajouter le mot de passe seulement s'il a été modifié
     if (newPassword.value) {
         payload.employees_password = newPassword.value;
     }
-    
     const { data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/employees/' + selectedEmployee.value.value, {
         method: 'PUT',
         headers: {
@@ -307,7 +297,6 @@ async function editEmployee() {
         body: payload
     });
     loading.value = false;
-    
     if (data.value && !data.value.error) {
         toast.add({
             title: 'Success',
@@ -315,11 +304,7 @@ async function editEmployee() {
             color: 'success',
             icon: 'bx:check'
         });
-        
-        // Réinitialiser le mot de passe
         newPassword.value = "";
-        
-        // Actualiser la liste et les données sélectionnées
         fetchEmployees();
         fetchSelectedData();
     } else {
@@ -335,7 +320,19 @@ async function editEmployee() {
 // Fonction pour supprimer un employé
 async function deleteEmployee() {
     if (!selectedEmployee.value || !selectedEmployee.value.value) return;
-    
+    // Chief : ne peut supprimer que dans son magasin
+    if(user_data.value.employees_role === "chief") {
+        const employee = employees.value.find(e => e.employees_id === selectedEmployee.value.value);
+        if(!employee || employee.store_id !== user_data.value.store.store_id) {
+            toast.add({
+                title: 'Error',
+                description: "You can only delete employees from your store.",
+                color: 'error',
+                icon: 'bx:x'
+            });
+            return;
+        }
+    }
     loading.value = true;
     const { data } = await useLazyFetch('https://mirrorsoul.alwaysdata.net/sae401/API/API/employees/' + selectedEmployee.value.value, {
         method: 'DELETE',
@@ -346,7 +343,6 @@ async function deleteEmployee() {
         }
     });
     loading.value = false;
-    
     if (data.value && !data.value.error) {
         toast.add({
             title: 'Success',
@@ -354,8 +350,6 @@ async function deleteEmployee() {
             color: 'success',
             icon: 'bx:check'
         });
-        
-        // Réinitialiser la sélection et actualiser la liste
         selectedEmployee.value = null;
         fetchedSelectedData.value = {};
         fetchEmployees();
