@@ -62,6 +62,7 @@
                 </LMarker>
                 <!-- La position du client -->
                 <LMarker
+                    v-if="userPosition.lat != 0 && userPosition.lng != 0"
                     key="user"
                     :lat-lng="[userPosition.lat, userPosition.lng]">
                     <LPopup>
@@ -106,18 +107,20 @@
     // Stocker les magasins avec leurs coordonnées
     const storesWithCoordinates = ref([]);
 
-    if(storesData.value){
-        (async () => {
-            for (const store of storesData.value) {
-                const { data:coords } = await useLazyFetch(`https://nominatim.openstreetmap.org/search?q=${store.street} ${store.city}&format=json&limit=1`);
-                storesWithCoordinates.value.push({
-                    store: store,
-                    lat: coords.value[0].lat,
-                    lng: coords.value[0].lon
-                })
-            }
-        })();
-    }
+    onMounted(() => {
+        if(storesData.value){
+            (async () => {
+                for (const store of storesData.value) {
+                    const { data:coords } = await useLazyFetch(`https://nominatim.openstreetmap.org/search?q=${store.street} ${store.city}&format=json&limit=1`);
+                    storesWithCoordinates.value.push({
+                        store: store,
+                        lat: coords.value[0].lat,
+                        lng: coords.value[0].lon
+                    })
+                }
+            })();
+        }
+    });
 
 
     </script>
