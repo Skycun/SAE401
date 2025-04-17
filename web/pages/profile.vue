@@ -27,6 +27,8 @@
 <script setup>
 
 const router = useRouter();
+const toast = useToast();
+
 const user_data = useCookie('user_data');
 if(!user_data.value){
     router.push('/');
@@ -48,6 +50,21 @@ async function updateProfile() {
         })
     });
     console.log(data);
+    if(data.state && data.state == 'success'){ 
+        toast.add({
+            title: 'Success',
+            description: "Your profile has been updated",
+            color: 'success',
+            icon: 'bx:check'
+        });
+    }else{
+        toast.add({
+            title: 'Error',
+            description: "An error occurred while updating your profile",
+            color: 'error',
+            icon: 'bx:x'
+        });
+    }
 }
 
 
