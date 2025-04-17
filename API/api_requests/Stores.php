@@ -1,32 +1,80 @@
 <?php
+/**
+ * Stores API Endpoint
+ *
+ * This file handles API requests for the Stores entity.
+ * Supported HTTP methods: GET, POST, PUT, DELETE.
+ *
+ * - GET:    Retrieve all stores, a specific store by ID, or search stores by name.
+ * - POST:   Create a new store (requires API key).
+ * - PUT:    Update an existing store (requires API key).
+ * - DELETE: Delete a store by ID (requires API key).
+ *
+ * API key is required for POST, PUT, and DELETE requests.
+ *
+ * Headers:
+ *   - Api: Your API key (required for POST, PUT, DELETE)
+ *   - Content-Type: application/json
+ *
+ * Query Parameters:
+ *   - action: (getAll|get|search) [GET]
+ *   - id: Store ID [GET, DELETE, PUT]
+ *   - q: Store name to search [GET, action=search]
+ *
+ * Request Body (JSON):
+ *   - store_name: string [POST, PUT] - Name of the store
+ *   - phone: string [POST, PUT] - Phone number of the store
+ *   - email: string [POST, PUT] - Email address of the store
+ *   - street: string [POST, PUT] - Street address of the store
+ *   - city: string [POST, PUT] - City where the store is located
+ *   - state: string [POST, PUT] - State where the store is located
+ *   - zip_code: string [POST, PUT] - Zip code of the store
+ *   - id: int [PUT] - ID of the store to update
+ *
+ * Responses:
+ *   - 200: Success, returns JSON data
+ *   - 401: Unauthorized (invalid API key)
+ *   - 400: Bad request (missing parameters)
+ *   - 404: Not found (store not found)
+ *   - 500: Internal server error
+ *
+ * @package API\Requests
+ */
+
     //Config
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization, Api");
     header("Content-Type: application/json; charset=UTF-8");
 
-    // Définir votre clé API
+    // Define your API key
     define('API_KEY', 'e8f1997c763');
 
     require __DIR__ . '/../bootstrap.php';
     use Entity\Stores;
     $request_method = $_SERVER["REQUEST_METHOD"];
 
-    // Vérifier la clé API
+    /**
+     * Validate the API key from headers.
+     * Exempts OPTIONS requests and GET/login actions.
+     * Sends 401 Unauthorized and exits on failure.
+     *
+     * @return void
+     */
     function validateApiKey() {
         $headers = getallheaders();
         
-        // Exempter les requêtes OPTIONS de la vérification API
+        // Exempt OPTIONS requests from API key check
         if($_SERVER["REQUEST_METHOD"] == "OPTIONS"){
             return;
         }
         
-        // Pour l'action login et les requêtes GET, exempter de la vérification
+        // Exempt login action and GET requests from API key check
         if(isset($_REQUEST["action"]) && $_REQUEST["action"] == "login" || $_SERVER["REQUEST_METHOD"] == "GET"){
             return;
         }
         
-        // Vérifier si la clé est présente dans les headers
+        // Check if the API key is present and valid
         if (!isset($headers['Api']) || $headers['Api'] !== API_KEY) {
             header('HTTP/1.1 401 Unauthorized');
             echo json_encode(['error' => 'Invalid API Key']);
@@ -38,11 +86,11 @@
     try{
     switch($request_method){
 
-        //If the request method is in GET
+        // GET: Retrieve stores with various filters
         case "GET":
             $storeRepo = $entityManager->getRepository(Stores::class);
 
-            //If action isn't get or the action is getAll, return all the stores
+            // If action isn't set or is getAll, return all stores
             if(!isset($_REQUEST["action"]) || $_REQUEST["action"] == "getAll"){ 
                 $stores = $storeRepo->findAll();
                 $storesArray = [];
@@ -54,7 +102,7 @@
             }
 
             switch ($_REQUEST["action"]) {
-                //If the action is get, return the store with the id
+                // GET: Retrieve a store by ID
                 case 'get':
                     if(!isset($_REQUEST["id"])){
                         throw new Error("ID not found");
@@ -66,7 +114,7 @@
                     echo json_encode($store->jsonSerialize());
                     break;
                 
-                //If the action is search, return the stores with the name
+                // GET: Search stores by name (partial match)
                 case 'search':
                     if(!isset($_REQUEST["q"])){
                         throw new Error("Query not found");
@@ -74,7 +122,7 @@
                     
                     $searchTerm = '%' . $_REQUEST["q"] . '%';
                     
-                    // QueryBuilder avec LIKE pour une recherche partielle
+                    // Use QueryBuilder with LIKE for partial matching
                     $qb = $entityManager->createQueryBuilder();
                     $qb->select('s')
                        ->from('Entity\Stores', 's')
@@ -101,6 +149,8 @@
                     break;
                 }
                 break;
+
+        // POST: Create a new store
         case "POST":
             $data = json_decode(file_get_contents("php://input"), true);
             if(!isset($data["store_name"]) || !isset($data["phone"]) || !isset($data["email"]) || !isset($data["street"]) || !isset($data["city"]) || !isset($data["state"]) || !isset($data["zip_code"])){
@@ -122,6 +172,7 @@
             echo json_encode($res);
             break;
 
+        // DELETE: Delete a store by ID
         case "DELETE":
             if(!isset($_REQUEST["id"])){
                 throw new Error("ID not found");
@@ -136,16 +187,18 @@
             $res = Array("state" => "success");
             echo json_encode($res);
             break;
+
+        // PUT: Update an existing store
         case "PUT":
             $data = json_decode(file_get_contents("php://input"), true);
             if(!isset($data["id"])){
-                throw new Error("Store name or ID not found");
+                throw new Error("Store ID not found");
                 break;
             }
             $storeRepo = $entityManager->getRepository(Stores::class);
             $store = $storeRepo->find($data["id"]);
             if($store == null){
-                throw new Error("Brand not found");
+                throw new Error("Store not found");
             }
 
             $nbOfChange = 0;

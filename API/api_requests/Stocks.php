@@ -1,11 +1,51 @@
 <?php
+/**
+ * Stocks API Endpoint
+ *
+ * This file handles API requests for the Stocks entity.
+ * Supported HTTP methods: GET, POST, PUT, DELETE.
+ *
+ * - GET:    Retrieve all stocks, a specific stock by ID, stocks by store, or paginated products with stocks.
+ * - POST:   Create a new stock (requires API key).
+ * - PUT:    Update an existing stock (requires API key).
+ * - DELETE: Delete a stock by ID (requires API key).
+ *
+ * API key is required for POST, PUT, and DELETE requests.
+ *
+ * Headers:
+ *   - Api: Your API key (required for POST, PUT, DELETE)
+ *   - Content-Type: application/json
+ *
+ * Query Parameters:
+ *   - action: (getAll|get|getFromStore|paginate) [GET]
+ *   - id: Stock ID [GET, DELETE, PUT]
+ *   - store_id: Store ID [GET, action=getFromStore]
+ *   - page: Page number for pagination [GET, action=paginate]
+ *   - limit: Number of items per page [GET, action=paginate]
+ *
+ * Request Body (JSON):
+ *   - store_id: int [POST, PUT] - ID of the store
+ *   - product_id: int [POST, PUT] - ID of the product
+ *   - quantity: int [POST, PUT] - Quantity of the product in stock
+ *   - id: int [PUT] - ID of the stock to update
+ *
+ * Responses:
+ *   - 200: Success, returns JSON data
+ *   - 401: Unauthorized (invalid API key)
+ *   - 400: Bad request (missing parameters)
+ *   - 404: Not found (stock, store, or product not found)
+ *   - 500: Internal server error
+ *
+ * @package API\Requests
+ */
+
     //Config
     header("Access-Control-Allow-Origin: *");
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: Content-Type, Authorization, Api");
     header("Content-Type: application/json; charset=UTF-8");
     
-    // Définir votre clé API
+    // Define your API key
     define('API_KEY', 'e8f1997c763');
 
     require __DIR__ . '/../bootstrap.php';
@@ -14,21 +54,27 @@
     use Entity\Stores;
     $request_method = $_SERVER["REQUEST_METHOD"];
 
-    // Vérifier la clé API
+    /**
+     * Validate the API key from headers.
+     * Exempts OPTIONS requests and GET/login actions.
+     * Sends 401 Unauthorized and exits on failure.
+     *
+     * @return void
+     */
     function validateApiKey() {
         $headers = getallheaders();
         
-        // Exempter les requêtes OPTIONS de la vérification API
+        // Exempt OPTIONS requests from API key check
         if($_SERVER["REQUEST_METHOD"] == "OPTIONS"){
             return;
         }
         
-        // Pour l'action login et les requêtes GET, exempter de la vérification
+        // Exempt login action and GET requests from API key check
         if(isset($_REQUEST["action"]) && $_REQUEST["action"] == "login" || $_SERVER["REQUEST_METHOD"] == "GET"){
             return;
         }
         
-        // Vérifier si la clé est présente dans les headers
+        // Check if the API key is present and valid
         if (!isset($headers['Api']) || $headers['Api'] !== API_KEY) {
             header('HTTP/1.1 401 Unauthorized');
             echo json_encode(['error' => 'Invalid API Key']);
@@ -40,11 +86,11 @@
     try{
     switch($request_method){
 
-        //If the request method is in GET
+        // GET: Retrieve stocks with various filters
         case "GET":
             $stockRepo = $entityManager->getRepository(Stocks::class);
 
-            //If action isn't get or the action is getAll, return all the stocks of all the stocks
+            // If action isn't set or is getAll, return all stocks
             if(!isset($_REQUEST["action"]) || $_REQUEST["action"] == "getAll"){ 
                 $stocks = $stockRepo->findAll();
                 $stocksArray = [];
@@ -56,7 +102,7 @@
             }
 
             switch ($_REQUEST["action"]) {
-                //If the action is get, return the stock with the id
+                // GET: Retrieve a stock by ID
                 case 'get':
                     if(!isset($_REQUEST["id"])){
                         throw new Error("ID not found");
@@ -68,7 +114,7 @@
                     echo json_encode($stock->jsonSerialize());
                     break;
                 
-                //If the action is getFromStore, return the stock of the store with the store_id
+                // GET: Retrieve stocks by store ID
                 case 'getFromStore':
                     if(!isset($_REQUEST["store_id"])){
                         throw new Error("Store ID not found");
@@ -84,8 +130,8 @@
                     }
                     echo json_encode($stocksArray);
                     break;
-                    // Ajoutez un nouveau case pour la pagination
-                // Ajoutez un nouveau case pour la pagination
+
+                // GET: Paginated list of products with their stocks
                 case "paginate":
                     if(!isset($_REQUEST["page"]) || !isset($_REQUEST["limit"])){
                         throw new Error("Page or limit not found");
@@ -94,15 +140,15 @@
                     $page = intval($_REQUEST["page"]);
                     $limit = intval($_REQUEST["limit"]);
                     
-                    // Valider les paramètres
+                    // Validate parameters
                     if ($page < 1 || $limit < 1) {
                         throw new Error("Invalid page or limit values");
                     }
                     
-                    // Calculer l'offset
+                    // Calculate offset
                     $offset = ($page - 1) * $limit;
                     
-                    // Récupérer les produits paginés
+                    // Get paginated products
                     $productRepo = $entityManager->getRepository(Entity\Products::class);
                     $products = $productRepo->createQueryBuilder('p')
                         ->orderBy('p.product_id', 'ASC')
@@ -111,7 +157,7 @@
                         ->getQuery()
                         ->getResult();
                     
-                    // Obtenir le nombre total de produits pour calculer le nombre total de pages
+                    // Get total products count for pagination metadata
                     $totalProducts = $productRepo->createQueryBuilder('p')
                         ->select('COUNT(p.product_id)')
                         ->getQuery()
@@ -119,21 +165,21 @@
                     
                     $totalPages = ceil($totalProducts / $limit);
                     
-                    // Préparer le tableau de résultats
+                    // Prepare result array
                     $productsWithStocks = [];
                     
-                    // Pour chaque produit, récupérer ses stocks dans tous les magasins
+                    // For each product, get its stocks in all stores
                     foreach ($products as $product) {
                         $productData = $product->jsonSerialize();
                         
-                        // Récupérer tous les stocks pour ce produit
+                        // Get all stocks for this product
                         $stocks = $stockRepo->createQueryBuilder('s')
                             ->where('s.product = :product')
                             ->setParameter('product', $product)
                             ->getQuery()
                             ->getResult();
                         
-                        // Formater les données de stock par magasin
+                        // Format stock data by store
                         $stocksByStore = [];
                         foreach ($stocks as $stock) {
                             $stocksByStore[] = [
@@ -146,14 +192,14 @@
                             ];
                         }
                         
-                        // Ajouter les stocks au produit
+                        // Add stocks to product
                         $productData['stocks'] = $stocksByStore;
                         
-                        // Ajouter le produit au tableau de résultats
+                        // Add product to results
                         $productsWithStocks[] = $productData;
                     }
                     
-                    // Inclure les métadonnées de pagination dans la réponse
+                    // Include pagination metadata in response
                     $response = [
                         'data' => $productsWithStocks,
                         'pagination' => [
@@ -171,6 +217,8 @@
                     break;
                 }
                 break;
+
+        // POST: Create a new stock
         case "POST":
             $data = json_decode(file_get_contents("php://input"), true);
             if(!isset($data["store_id"]) || !isset($data["product_id"]) || !isset($data["quantity"])){
@@ -196,6 +244,8 @@
             $res = Array("state" => "success", "stock" => $stock->jsonSerialize());
             echo json_encode($res);
             break;
+
+        // DELETE: Delete a stock by ID
         case "DELETE":
             if(!isset($_REQUEST["id"])){
                 throw new Error("ID not found");
@@ -210,8 +260,9 @@
             $res = Array("state" => "success");
             echo json_encode($res);
             break;
-        case "PUT":
 
+        // PUT: Update an existing stock
+        case "PUT":
             $data = json_decode(file_get_contents("php://input"), true);
             if(!isset($data["id"])){
                 throw new Error("ID not found");
