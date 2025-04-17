@@ -19,11 +19,18 @@
 
 <script setup>
 
+// Si le cookie user_data existe, on redirige vers la page d'accueil
+const router = useRouter();
+const user_data = useCookie('user_data');
+if(user_data.value){
+    router.push('/');
+}
+
+
 const email = ref('');
 const password = ref('');
 const remember = ref(false);
 const error = ref('');
-const router = useRouter();
 
 async function login(){
     let data = {

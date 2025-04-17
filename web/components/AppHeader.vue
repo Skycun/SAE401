@@ -56,6 +56,11 @@ if(!user_data.value){
                 to: '/admin'
             },
             {
+                label: 'Profile',
+                icon: 'bx:bxs-user',
+                to: '/profile'
+            },
+            {
                 label: 'Database',
                 icon: 'material-symbols:database-outline',
                 children: [

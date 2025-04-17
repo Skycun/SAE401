@@ -191,7 +191,7 @@
                 $employee->setEmployeesEmail($data["employees_email"]);
                 $nbOfChange++;
             }
-            if(isset($data["employees_password"])){
+            if(isset($data["employees_password"]) && $data["employees_password"] != ""){
                 $employee->setEmployeesPassword($data["employees_password"]);
                 $nbOfChange++;
             }
