@@ -112,20 +112,11 @@
             console.log(storesData.value);
             (async () => {
                 for (const store of storesData.value) {
-                    const { data:coords } = $fetch('https://nominatim.openstreetmap.org/search', {
-                        method: 'GET',
-                        params: {
-                            q: `${store.street}, ${store.city}, ${store.state}, ${store.zip_code}`,
-                            format: 'json',
-                            addressdetails: 1,
-                            limit: 1
-                        }
-                    });
-                    console.log(coords.value);
+                    const coords = await $fetch(`https://nominatim.openstreetmap.org/search?street=${store.street}&city=${store.city}&format=json&limit=1`);
                     storesWithCoordinates.value.push({
                         store: store,
-                        lat: coords.value[0].lat,
-                        lng: coords.value[0].lon
+                        lat: coords[0].lat,
+                        lng: coords[0].lon
                     })
                 }
             })();
