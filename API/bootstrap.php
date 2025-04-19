@@ -18,7 +18,7 @@ $config = ORMSetup::createAnnotationMetadataConfiguration($paths,$isDevMode);
 $connection = DriverManager::getConnection([
     'dbname' => 'mirrorsoul_sae401',
     'user' => '373589_skycun',
-    'password' => 'motdepasseSAE',
+    'password' => '***',
     'host' => 'mysql-mirrorsoul.alwaysdata.net:3306',
     'driver' => 'pdo_mysql',
 ], $config);
