@@ -123,7 +123,6 @@ async function addBrand() {
         });
         return;
     }else{ //Sinon on affiche un message de succès
-        console.log(data.value);
         fetchBrands(); // Recharger la liste des marques
         toast.add({
             title: 'Success',
@@ -154,7 +153,6 @@ async function deleteBrand() {
         });
         return;
     }else{ //Sinon on affiche un message de succès
-        console.log(data.value);
         fetchBrands(); // Recharger la liste des marques
         toast.add({
             title: 'Success',
@@ -179,7 +177,6 @@ async function editBrand() {
             brand_name: fetchedSelectedData.value.brand_name
         }
     });
-    console.log(data.value);
     //Si il y a une erreur dans la réponse de l'API, on affiche un message d'erreur
     if(data.value.error != null){
         toast.add({
@@ -190,7 +187,6 @@ async function editBrand() {
         });
         return;
     }else{ //Sinon on affiche un message de succès
-        console.log(data.value);
         fetchBrands(); // Recharger la liste des marques
         toast.add({
             title: 'Success',

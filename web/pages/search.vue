@@ -57,9 +57,6 @@
 
 const route = useRoute();
 const query = ref('');
-console.log(route.query);
-
-
 if(route.query.q) {
     query.value = route.query.q;
 }

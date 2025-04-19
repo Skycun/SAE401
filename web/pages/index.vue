@@ -109,9 +109,19 @@
 
     onMounted(() => {
         if(storesData.value){
+            console.log(storesData.value);
             (async () => {
                 for (const store of storesData.value) {
-                    const { data:coords } = await useLazyFetch(`https://nominatim.openstreetmap.org/search?q=${store.street} ${store.city}&format=json&limit=1`);
+                    const { data:coords } = $fetch('https://nominatim.openstreetmap.org/search', {
+                        method: 'GET',
+                        params: {
+                            q: `${store.street}, ${store.city}, ${store.state}, ${store.zip_code}`,
+                            format: 'json',
+                            addressdetails: 1,
+                            limit: 1
+                        }
+                    });
+                    console.log(coords.value);
                     storesWithCoordinates.value.push({
                         store: store,
                         lat: coords.value[0].lat,

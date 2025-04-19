@@ -49,7 +49,6 @@ async function updateProfile() {
             employees_password: password.value
         })
     });
-    console.log(data);
     if(data.state && data.state == 'success'){ 
         toast.add({
             title: 'Success',

@@ -46,7 +46,6 @@ async function login(){
         body: JSON.stringify(data)
     });
     let json = await res.json();
-    console.log(json);
     if(json.state === "success"){
         const userCookie = useCookie('user_data', {
             maxAge: remember.value ? 60 * 60 * 24 * 7 : 60 * 60 * 24,
@@ -55,6 +54,7 @@ async function login(){
         });
         userCookie.value = JSON.stringify(json.employee);
         router.push('/admin');
+        window.location.reload();
     }else{
         error.value = "Email ou mot de passe incorrect";
     }

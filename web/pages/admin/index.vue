@@ -38,6 +38,4 @@ if(!user_data.value){
     router.push('/login');
 }
 
-console.log(user_data.value);
-
 </script>

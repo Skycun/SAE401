@@ -16,5 +16,6 @@
         });
         userCookie.value = null;
         router.push('/');
+        window.location.reload();
     }
 </script>

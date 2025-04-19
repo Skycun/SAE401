@@ -144,8 +144,6 @@ async function fetchProductFromStore(){
             'Accept': 'application/json'
         }
     });
-    console.log(data.value);
-    console.log(products.value);
 
     fetchedProductFromStore.value = data.value;
     loading.value = status.value === 200 ? true : false;
@@ -192,7 +190,6 @@ async function addStock(){
         });
         return;
     }else{ //Sinon on affiche un message de succès
-        console.log(data.value);
         toast.add({
             title: 'Success',
             description: 'Stock added successfully',
@@ -226,7 +223,6 @@ async function editStock(){
         });
         return;
     }else{ //Sinon on affiche un message de succès
-        console.log(data.value);
         toast.add({
             title: 'Success',
             description: 'Stock edited successfully',
@@ -256,7 +252,6 @@ async function deleteStock(){
         });
         return;
     }else{ //Sinon on affiche un message de succès
-        console.log(data.value);
         toast.add({
             title: 'Success',
             description: 'Stock deleted successfully',
